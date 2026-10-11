@@ -1,8 +1,186 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quiz Clash</title><style>
-:root{--bg:#0b1020;--panel:#141c31;--panel2:#1c2741;--text:#f5f7ff;--muted:#9ca9c7;--accent:#8b7cff;--line:#2b3856;--green:#4de0b2;--gold:#ffd166}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#182447 0,#0b1020 58%);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}.wrap{max-width:1000px;margin:auto;padding:24px 16px 48px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:26px}.brand{font-weight:900;letter-spacing:.08em;font-size:21px}.brand span{color:var(--accent)}.pill{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--muted)}.hero{padding:26px 0 20px}.eyebrow{color:var(--green);text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:800}.hero h1{font-size:clamp(34px,7vw,58px);line-height:1.02;letter-spacing:-.04em;margin:10px 0}.hero p{color:var(--muted);max-width:600px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.panel{background:rgba(20,28,49,.94);border:1px solid var(--line);border-radius:20px;padding:22px;min-width:0}.panel h2{font-size:20px;margin:0 0 8px}.sub{color:var(--muted);font-size:14px;margin:0 0 18px}label{display:block;color:var(--muted);font-size:13px;margin:12px 0 6px}input,select{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:11px;background:#0c1428;color:var(--text);font:inherit;min-height:48px}button{border:0;border-radius:12px;padding:12px 16px;min-height:46px;font:700 15px inherit;font-family:inherit;font-weight:750;cursor:pointer;background:var(--accent);color:white}button:disabled{opacity:.45;cursor:not-allowed}.secondary{background:var(--panel2);border:1px solid var(--line)}.full{width:100%;margin-top:14px}.note{color:var(--muted);font-size:12px;margin-top:16px}.hidden{display:none!important}.roomhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.code{font-size:25px;font-weight:900;letter-spacing:.15em;color:var(--gold)}.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px;margin:16px 0}.player{background:#0c1428;border:1px solid var(--line);border-radius:12px;padding:12px}.player strong{display:block;overflow-wrap:anywhere}.muted{color:var(--muted);font-size:12px}.quizhead{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.timer{font-weight:900;color:var(--gold);font-size:22px}.question{font-size:clamp(23px,4vw,34px);font-weight:850;line-height:1.15;margin:24px 0}.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.answer{background:#1a2540;text-align:left;border:1px solid #334365;min-height:66px}.answer:hover{border-color:var(--accent)}.answer.selected{background:#37306b;border-color:var(--accent)}.answer.correct{border-color:var(--green);background:#153e3a}.answer.wrong{border-color:#ff6e86;background:#452333}.scoreboard{display:grid;gap:8px}.score-row{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:10px;background:#0c1428}.score-row.me{outline:1px solid var(--accent)}.score{font-weight:850}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.message{padding:12px 14px;border-radius:10px;background:#222b4a;color:#dfe4ff;margin-top:12px}.error{color:#ff9db0}.success{color:var(--green)}.sectiontitle{margin:22px 0 10px;font-size:15px}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:26px}@media(max-width:650px){.grid{grid-template-columns:1fr}.wrap{padding:16px 12px 32px}.panel{padding:18px}.answers{grid-template-columns:1fr}.hero{padding-top:10px}.top{margin-bottom:14px}}
-</style></head><body><main class="wrap"><header class="top"><div class="brand">⚡ QUIZ <span>CLASH</span></div><div class="pill">REAL-TIME PARTY QUIZ · 2–8 PLAYERS</div></header><section id="home"><div class="hero"><div class="eyebrow">Think fast. Score big.</div><h1>Friends in.<br>Brains on.</h1><p>A quick-fire quiz battle where correct answers earn points, speed earns bonuses, and the leaderboard can change in seconds.</p></div><div class="grid"><section class="panel"><h2>Create a room</h2><p class="sub">Host a private match and invite your friends with a room code.</p><label for="hostName">Your display name</label><input id="hostName" maxlength="18" placeholder="e.g. QuizMaster" value="Host"><label for="category">Question category</label><select id="category"><option>Mixed Quiz</option><option>General Knowledge</option><option>Science</option><option>Sports</option><option>Movies & Entertainment</option><option>History & Geography</option></select><button id="createBtn" class="full">Create room →</button></section><section class="panel"><h2>Join a room</h2><p class="sub">Enter the six-character code shared by the host.</p><label for="joinName">Your display name</label><input id="joinName" maxlength="18" placeholder="e.g. FastFingers"><label for="joinCode">Room code</label><input id="joinCode" maxlength="6" placeholder="ABC123" autocapitalize="characters"><button id="joinBtn" class="full">Join battle →</button><div id="homeMsg" aria-live="polite"></div></section></div><p class="note">Local test build: all devices must be able to reach the same running server. Opening localhost on a different device points to that device, not the host computer.</p></section>
-<section id="game" class="hidden"><div class="panel"><div class="roomhead"><div><div class="muted">ROOM CODE · SHARE WITH FRIENDS</div><div class="code" id="roomCode">------</div></div><div><div class="muted">ROUND</div><strong id="roundLabel">Lobby</strong></div><button id="copyCode" class="secondary">Copy code</button></div><div id="statusMsg" class="message" aria-live="polite">Waiting for players…</div><h3 class="sectiontitle">Players <span class="muted" id="playerCount"></span></h3><div id="players" class="players"></div><div id="lobbyControls" class="actions"><button id="startBtn">Start game</button><button id="leaveBtn" class="secondary">Leave room</button></div><div id="quizArea" class="hidden"><div class="quizhead"><span class="pill" id="categoryTag">Mixed Quiz</span><div class="timer" id="timer">15s</div></div><div class="question" id="questionText"></div><div class="answers" id="answers"></div><div class="actions"><select id="targetPlayer" aria-label="Choose opponent"><option value="">Choose opponent</option></select><button id="sabotageBtn" class="secondary">🌀 Sabotage</button><button id="stealBtn" class="secondary">💰 Steal 300</button></div><p class="note">Correct answer: 1,000 points + up to 500 speed points. Sabotage and steal are one-use tactical actions.</p></div><div id="resultArea" class="hidden"><h2 id="resultTitle">Round results</h2><p id="correctAnswer" class="success"></p><div id="roundBreakdown"></div><div class="actions"><button id="nextBtn">Next question →</button><button id="rematchBtn" class="secondary hidden">Play again</button></div></div></div><div class="panel" style="margin-top:16px"><h2>Live leaderboard</h2><div id="leaderboard" class="scoreboard"></div></div></section><div class="footer">QUIZ CLASH · Core gameplay prototype</div></main><script>
-const $=id=>document.getElementById(id);let playerId=null,code=null,isHost=false,room=null,poll=null,timerInt=null,selectedAnswer=null,answered=false,shownError='';const api=async(path,data={})=>{const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const j=await r.json();if(!r.ok)throw new Error(j.error||'Something went wrong');return j};function msg(el,text,cls=''){el.innerHTML='';const s=document.createElement('span');s.textContent=text;s.className=cls;el.append(s)}function showHomeError(t){msg($('homeMsg'),t,'error')}function enter(data){playerId=data.playerId;room=data.room;code=room.code;isHost=room.hostId===playerId;$('home').classList.add('hidden');$('game').classList.remove('hidden');$('roomCode').textContent=code;render();if(poll)clearInterval(poll);poll=setInterval(refresh,700)}async function refresh(){if(!code)return;try{const r=await fetch('/api/room?code='+encodeURIComponent(code));if(!r.ok)throw new Error('Room closed');const d=await r.json();room=d;isHost=room.hostId===playerId;render()}catch(e){if(poll)clearInterval(poll);msg($('statusMsg'),'Connection lost. Check that the server is running.','error')}}function render(){if(!room)return;$('roomCode').textContent=room.code;$('playerCount').textContent=`(${room.players.length}/8)`;$('roundLabel').textContent=room.phase==='lobby'?'Lobby':room.phase==='finished'?'Finished':` ${room.round+1} / ${room.totalRounds}`;$('players').innerHTML='';room.players.forEach(p=>{const el=document.createElement('div');el.className='player';const name=document.createElement('strong');name.textContent=p.name+(p.id===playerId?' (you)':'')+(p.id===room.hostId?' ★':'');const score=document.createElement('div');score.className='muted';score.textContent=`${p.score.toLocaleString()} pts`;el.append(name,score);$('players').append(el)});$('startBtn').classList.toggle('hidden',!isHost||room.phase!=='lobby');$('startBtn').disabled=room.players.length<2;$('lobbyControls').classList.toggle('hidden',room.phase!=='lobby');$('quizArea').classList.toggle('hidden',room.phase!=='question');$('resultArea').classList.toggle('hidden',!['results','finished'].includes(room.phase));if(room.phase==='lobby'){msg($('statusMsg'),room.players.length<2?'Waiting for at least one more player. Share the code above.':'Everyone is in. Host can start the battle.')}else if(room.phase==='question'){msg($('statusMsg'),answered?'Answer locked in — waiting for the reveal.':'Choose your answer before the timer ends.');$('categoryTag').textContent=room.question.cat;$('questionText').textContent=room.question.q;if(!answered && selectedAnswer===null)buildAnswers();else if(selectedAnswer!==null)markSelected();$('targetPlayer').innerHTML='<option value="">Choose opponent</option>';room.players.filter(p=>p.id!==playerId).forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;$('targetPlayer').append(o)});$('sabotageBtn').disabled=!!(room.players.find(p=>p.id===playerId)?.powers?.sabotage);$('stealBtn').disabled=!!room.players.find(p=>p.id===playerId)?.lastSteal;startTimer()}else if(room.phase==='results'){clearInterval(timerInt);$('resultTitle').textContent=`Round ${room.round+1} results`;$('correctAnswer').textContent='Correct answer: '+room.question?.a?.[room.results?.correct]||'';renderBreakdown();$('nextBtn').classList.toggle('hidden',!isHost);$('rematchBtn').classList.add('hidden');msg($('statusMsg'),'Answers revealed. Check the scores below.')}else if(room.phase==='finished'){clearInterval(timerInt);$('resultTitle').textContent='🏆 Quiz complete!';$('correctAnswer').textContent=`Winner: ${room.winner||'—'}`;renderBreakdown();$('nextBtn').classList.add('hidden');$('rematchBtn').classList.toggle('hidden',!isHost);msg($('statusMsg'),'Final results are in! Rematch when ready.')}renderLeaderboard()}
-function buildAnswers(){const a=$('answers');a.innerHTML='';room.question.a.forEach((txt,i)=>{const b=document.createElement('button');b.className='answer';b.textContent=String.fromCharCode(65+i)+'. '+txt;b.addEventListener('click',()=>submitAnswer(i));a.append(b)})}function markSelected(){[...$('answers').children].forEach((b,i)=>{b.classList.toggle('selected',i===selectedAnswer);b.disabled=answered})}async function submitAnswer(i){if(answered||room.phase!=='question')return;selectedAnswer=i;answered=true;markSelected();try{await api('/api/answer',{code,playerId,answer:i});refresh()}catch(e){msg($('statusMsg'),e.message,'error')}}function startTimer(){clearInterval(timerInt);const tick=()=>{if(!room?.question)return;const left=Math.max(0,Math.ceil((room.question.endsAt-Date.now())/1000));$('timer').textContent=left+'s';if(left===0)clearInterval(timerInt)};tick();timerInt=setInterval(tick,250)}function renderBreakdown(){const a=room.results?.answers||[];$('roundBreakdown').innerHTML='';a.sort((x,y)=>(y.earned||0)-(x.earned||0)).forEach(x=>{const row=document.createElement('div');row.className='score-row';const left=document.createElement('span');left.textContent=x.name+(x.answer===null?' · no answer':x.correct?' · correct':' · incorrect');const right=document.createElement('strong');right.textContent='+'+(x.earned||0).toLocaleString();row.append(left,right);$('roundBreakdown').append(row)})}function renderLeaderboard(){const list=[...room.players].sort((a,b)=>b.score-a.score);$('leaderboard').innerHTML='';list.forEach((p,i)=>{const row=document.createElement('div');row.className='score-row'+(p.id===playerId?' me':'');const n=document.createElement('span');n.textContent=`${['🥇','🥈','🥉'][i]||`${i+1}.`} ${p.name}`;const s=document.createElement('span');s.className='score';s.textContent=p.score.toLocaleString();row.append(n,s);$('leaderboard').append(row)})}
-$('createBtn').onclick=async()=>{try{enter(await api('/api/create',{name:$('hostName').value,category:$('category').value}))}catch(e){showHomeError(e.message)}};$('joinBtn').onclick=async()=>{try{enter(await api('/api/join',{name:$('joinName').value,code:$('joinCode').value.trim().toUpperCase()}))}catch(e){showHomeError(e.message)}};$('joinCode').addEventListener('input',e=>e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6));$('startBtn').onclick=async()=>{try{await api('/api/start',{code,playerId});answered=false;selectedAnswer=null;refresh()}catch(e){msg($('statusMsg'),e.message,'error')}};$('nextBtn').onclick=async()=>{try{await api('/api/next',{code,playerId});answered=false;selectedAnswer=null;refresh()}catch(e){msg($('statusMsg'),e.message,'error')}};$('rematchBtn').onclick=async()=>{try{await api('/api/rematch',{code,playerId});answered=false;selectedAnswer=null;refresh()}catch(e){msg($('statusMsg'),e.message,'error')}};$('leaveBtn').onclick=async()=>{try{await api('/api/leave',{code,playerId})}catch{}if(poll)clearInterval(poll);clearInterval(timerInt);playerId=code=room=null;$('game').classList.add('hidden');$('home').classList.remove('hidden')};$('copyCode').onclick=async()=>{try{await navigator.clipboard.writeText(code);$('copyCode').textContent='Copied!'}catch{$('copyCode').textContent=code}};async function power(kind){const targetId=$('targetPlayer').value;if(!targetId){msg($('statusMsg'),'Choose an opponent first.','error');return}try{const r=await api('/api/power',{code,playerId,targetId,kind});msg($('statusMsg'),r.message||'Power-up used.','success');refresh()}catch(e){msg($('statusMsg'),e.message,'error')}}$('sabotageBtn').onclick=()=>power('sabotage');$('stealBtn').onclick=()=>power('steal');
-</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Clash — Trivia Battle</title>
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-light); line-height: 1.6; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        /* Typography & Components */
+        h1 { font-size: 2.5rem; text-align: center; margin-bottom: 10px; background: linear-gradient(to right, var(--accent-purple), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: 1.5rem; margin-bottom: 20px; color: var(--text-light); }
+        p.subtitle { text-align: center; color: var(--text-muted); margin-bottom: 30px; }
+        
+        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
+        input[type="text"] { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: white; margin-bottom: 20px; font-size: 1rem; }
+        
+        /* Grid Category Selection */
+        .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .cat-box { background: #0f172a; border: 1px solid #475569; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .cat-box.selected { border-color: var(--accent-purple); background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); }
+        
+        /* Buttons */
+        button { width: 100%; padding: 14px; background: linear-gradient(to right, var(--accent-purple), var(--accent-pink)); border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 12px; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        button.secondary { background: transparent; border: 1px solid #475569; color: var(--text-light); }
+        
+        /* Utility */
+        .badge-row { display: flex; justify-content: space-between; margin-bottom: 20px; background: #0f172a; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
+        .player-list { list-style: none; margin: 15px 0; }
+        .player-item { display: flex; justify-content: space-between; padding: 10px; background: #0f172a; border-radius: 6px; margin-bottom: 8px; }
+        
+        /* Game Dashboard */
+        .timer-bar { height: 6px; background: #475569; border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
+        .timer-fill { height: 100%; width: 100%; background: var(--accent-pink); transition: width 1s linear; }
+        .options-list { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+        .option-btn { background: #0f172a; border: 1px solid #475569; padding: 14px; border-radius: 8px; color: white; text-align: left; cursor: pointer; font-size: 1rem; }
+        .option-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--success); }
+        
+        .rules-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; font-size: 0.85rem; color: var(--text-muted); }
+        .rule-card { background: #0f172a; padding: 10px; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- SCREEN 1: LANDING / SETUP -->
+        <div id="home-screen" class="screen active">
+            <h1>QUIZ CLASH</h1>
+            <p class="subtitle">Think fast. Clash smarter.</p>
+            
+            <div class="card">
+                <h2>Create your battle</h2>
+                <label>YOUR NICKNAME</label>
+                <input type="text" id="nickname-input" value="Player 1">
+                
+                <label>CHOOSE CATEGORIES (pick at least one)</label>
+                <div class="category-grid">
+                    <div class="cat-box selected" onclick="toggleCategory(this)">Science</div>
+                    <div class="cat-box" onclick="toggleCategory(this)">History</div>
+                    <div class="cat-box" onclick="toggleCategory(this)">Geography</div>
+                    <div class="cat-box" onclick="toggleCategory(this)">Pop Culture</div>
+                </div>
+                <button onclick="goToScreen('waiting-screen')">✦ Create a room</button>
+            </div>
+            
+            <div class="card">
+                <label>ALREADY HAVE A ROOM CODE?</label>
+                <input type="text" placeholder="Enter room code...">
+                <button class="secondary" onclick="goToScreen('waiting-screen')">Join</button>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:10px; text-align:center;">Local demo: opponents are simulated in this browser.</p>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: WAITING ROOM -->
+        <div id="waiting-screen" class="screen">
+            <h1>Gather your squad</h1>
+            <p class="subtitle">Share the code and get everyone in.</p>
+            
+            <div class="card">
+                <label>ROOM CODE</label>
+                <div style="display:flex; gap:10px; margin-bottom:20px;">
+                    <input type="text" id="room-code" value="QZ4K2P" readonly style="margin:0;">
+                    <button style="width:auto; white-space:nowrap; margin:0;" onclick="alert('Code copied!')">Copy</button>
+                </div>
+                
+                <h3>Players (<span id="player-count">1</span>/8)</h3>
+                <ul class="player-list" id="lobby-players">
+                    <li class="player-item"><span>★ You (Host)</span><span style="color:var(--success)">Ready</span></li>
+                </ul>
+                
+                <button class="secondary" style="margin-bottom:12px;" onclick="addDemoPlayer()">+ Add demo player</button>
+                <button onclick="startTriviaGame()">Start battle →</button>
+                <button class="secondary" onclick="goToScreen('home-screen')">← Leave room</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: TRIVIA LOOP -->
+        <div id="game-screen" class="screen">
+            <div class="badge-row">
+                <span id="round-indicator">ROUND 1 OF 10</span>
+                <span id="score-indicator" style="color:var(--accent-pink); font-weight:bold;">Score: 0</span>
+            </div>
+            
+            <div class="timer-bar"><div class="timer-fill" id="timer-bar-fill"></div></div>
+            
+            <div class="card">
+                <label id="game-category">SCIENCE</label>
+                <h2 id="question-text" style="margin-top:10px;">Loading your question context...</h2>
+                
+                <div class="options-list" id="options-container">
+                    <!-- Dynamic rendering -->
+                </div>
+                
+                <button id="next-btn" style="display:none;" onclick="nextQuestion()">Next question →</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: END LEADERBOARD -->
+        <div id="end-screen" class="screen">
+            <h1>Battle Complete</h1>
+            <p class="subtitle" id="end-status">What a battle.</p>
+            
+            <div class="card">
+                <h2>🏆 Final Leaderboard</h2>
+                <ul class="player-list" id="final-leaderboard">
+                    <!-- Dynamic scores -->
+                </ul>
+                <button onclick="goToScreen('home-screen')">← Home</button>
+                <button class="secondary" onclick="restartGame()">Play again ↻</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let score = 0;
+        let round = 1;
+        let demoPlayers = [];
+        const sampleQuestions = [
+            { q: "Which planet is known as the Red Planet?", cat: "SCIENCE", o: ["Earth", "Mars", "Jupiter", "Saturn"], a: 1 },
+            { q: "What is the capital city of Australia?", cat: "GEOGRAPHY", o: ["Sydney", "Melbourne", "Canberra", "Brisbane"], a: 2 },
+            { q: "Who painted the famous 'Mona Lisa'?", cat: "POP CULTURE", o: ["Van Gogh", "Da Vinci", "Picasso", "Monet"], a: 1 }
+        ];
+        let currentQIndex = 0;
+
+        function goToScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function toggleCategory(element) {
+            element.classList.toggle('selected');
+        }
+
+        function addDemoPlayer() {
+            const names = ["Alex_Pro", "TriviaBot", "ClashMaster", "Brainiac"];
+            if (demoPlayers.length < 4) {
+                const nextName = names[demoPlayers.length];
+                demoPlayers.push({ name: nextName, score: 0 });
+                const li = document.createElement('li');
+                li.className = 'player-item';
+                li.innerHTML = `<span>${nextName}</span><span style="color:var(--text-muted)">Joined</span>`;
+                document.getElementById('lobby-players').appendChild(li);
+                document.getElementById('player-count').innerText = 1 + demoPlayers.length;
+            }
+        }
+
+        function startTriviaGame() {
+            score = 0;
