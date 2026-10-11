@@ -1,0 +1,9 @@
+{
+  "name": "quiz-clash",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Real-time room-code multiplayer trivia party game",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
