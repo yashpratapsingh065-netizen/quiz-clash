@@ -1,186 +1,163 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Clash — Trivia Battle</title>
-    <link rel="stylesheet" href="https://cloudflare.com">
-    <style>
-        :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --accent-purple: #8b5cf6;
-            --accent-pink: #ec4899;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
-            --success: #10b981;
+function startTriviaGame() {
+    score = 0;
+    round = 1;
+    currentQIndex = 0;
+
+    document.getElementById('score-indicator').innerText = 'Score: 0';
+    goToScreen('game-screen');
+    showQuestion();
+}
+
+function showQuestion() {
+    if (currentQIndex >= sampleQuestions.length) {
+        endGame();
+        return;
+    }
+
+    const question = sampleQuestions[currentQIndex];
+
+    document.getElementById('round-indicator').innerText =
+        `ROUND ${currentQIndex + 1} OF ${sampleQuestions.length}`;
+
+    document.getElementById('game-category').innerText = question.cat;
+    document.getElementById('question-text').innerText = question.q;
+
+    const container = document.getElementById('options-container');
+    container.innerHTML = '';
+
+    document.getElementById('next-btn').style.display = 'none';
+
+    question.o.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'option-btn';
+        button.innerText = option;
+
+        button.onclick = function () {
+            checkAnswer(index, button);
+        };
+
+        container.appendChild(button);
+    });
+
+    startTimer();
+}
+
+let timerInterval;
+let timeLeft = 15;
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 15;
+
+    const timerFill = document.getElementById('timer-bar-fill');
+    timerFill.style.width = '100%';
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+
+        timerFill.style.width = `${(timeLeft / 15) * 100}%`;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            revealAnswer();
         }
+    }, 1000);
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-light); line-height: 1.6; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .screen { display: none; }
-        .screen.active { display: block; }
-        
-        /* Typography & Components */
-        h1 { font-size: 2.5rem; text-align: center; margin-bottom: 10px; background: linear-gradient(to right, var(--accent-purple), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        h2 { font-size: 1.5rem; margin-bottom: 20px; color: var(--text-light); }
-        p.subtitle { text-align: center; color: var(--text-muted); margin-bottom: 30px; }
-        
-        .card { background: var(--card-bg); padding: 25px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
-        input[type="text"] { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: white; margin-bottom: 20px; font-size: 1rem; }
-        
-        /* Grid Category Selection */
-        .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .cat-box { background: #0f172a; border: 1px solid #475569; padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .cat-box.selected { border-color: var(--accent-purple); background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); }
-        
-        /* Buttons */
-        button { width: 100%; padding: 14px; background: linear-gradient(to right, var(--accent-purple), var(--accent-pink)); border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 12px; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
-        button.secondary { background: transparent; border: 1px solid #475569; color: var(--text-light); }
-        
-        /* Utility */
-        .badge-row { display: flex; justify-content: space-between; margin-bottom: 20px; background: #0f172a; padding: 12px; border-radius: 8px; font-size: 0.9rem; }
-        .player-list { list-style: none; margin: 15px 0; }
-        .player-item { display: flex; justify-content: space-between; padding: 10px; background: #0f172a; border-radius: 6px; margin-bottom: 8px; }
-        
-        /* Game Dashboard */
-        .timer-bar { height: 6px; background: #475569; border-radius: 3px; margin-bottom: 20px; overflow: hidden; }
-        .timer-fill { height: 100%; width: 100%; background: var(--accent-pink); transition: width 1s linear; }
-        .options-list { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
-        .option-btn { background: #0f172a; border: 1px solid #475569; padding: 14px; border-radius: 8px; color: white; text-align: left; cursor: pointer; font-size: 1rem; }
-        .option-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--success); }
-        
-        .rules-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; font-size: 0.85rem; color: var(--text-muted); }
-        .rule-card { background: #0f172a; padding: 10px; border-radius: 6px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        
-        <!-- SCREEN 1: LANDING / SETUP -->
-        <div id="home-screen" class="screen active">
-            <h1>QUIZ CLASH</h1>
-            <p class="subtitle">Think fast. Clash smarter.</p>
-            
-            <div class="card">
-                <h2>Create your battle</h2>
-                <label>YOUR NICKNAME</label>
-                <input type="text" id="nickname-input" value="Player 1">
-                
-                <label>CHOOSE CATEGORIES (pick at least one)</label>
-                <div class="category-grid">
-                    <div class="cat-box selected" onclick="toggleCategory(this)">Science</div>
-                    <div class="cat-box" onclick="toggleCategory(this)">History</div>
-                    <div class="cat-box" onclick="toggleCategory(this)">Geography</div>
-                    <div class="cat-box" onclick="toggleCategory(this)">Pop Culture</div>
-                </div>
-                <button onclick="goToScreen('waiting-screen')">✦ Create a room</button>
-            </div>
-            
-            <div class="card">
-                <label>ALREADY HAVE A ROOM CODE?</label>
-                <input type="text" placeholder="Enter room code...">
-                <button class="secondary" onclick="goToScreen('waiting-screen')">Join</button>
-                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:10px; text-align:center;">Local demo: opponents are simulated in this browser.</p>
-            </div>
-        </div>
+function checkAnswer(selectedIndex, button) {
+    clearInterval(timerInterval);
 
-        <!-- SCREEN 2: WAITING ROOM -->
-        <div id="waiting-screen" class="screen">
-            <h1>Gather your squad</h1>
-            <p class="subtitle">Share the code and get everyone in.</p>
-            
-            <div class="card">
-                <label>ROOM CODE</label>
-                <div style="display:flex; gap:10px; margin-bottom:20px;">
-                    <input type="text" id="room-code" value="QZ4K2P" readonly style="margin:0;">
-                    <button style="width:auto; white-space:nowrap; margin:0;" onclick="alert('Code copied!')">Copy</button>
-                </div>
-                
-                <h3>Players (<span id="player-count">1</span>/8)</h3>
-                <ul class="player-list" id="lobby-players">
-                    <li class="player-item"><span>★ You (Host)</span><span style="color:var(--success)">Ready</span></li>
-                </ul>
-                
-                <button class="secondary" style="margin-bottom:12px;" onclick="addDemoPlayer()">+ Add demo player</button>
-                <button onclick="startTriviaGame()">Start battle →</button>
-                <button class="secondary" onclick="goToScreen('home-screen')">← Leave room</button>
-            </div>
-        </div>
+    const question = sampleQuestions[currentQIndex];
+    const buttons = document.querySelectorAll('.option-btn');
 
-        <!-- SCREEN 3: TRIVIA LOOP -->
-        <div id="game-screen" class="screen">
-            <div class="badge-row">
-                <span id="round-indicator">ROUND 1 OF 10</span>
-                <span id="score-indicator" style="color:var(--accent-pink); font-weight:bold;">Score: 0</span>
-            </div>
-            
-            <div class="timer-bar"><div class="timer-fill" id="timer-bar-fill"></div></div>
-            
-            <div class="card">
-                <label id="game-category">SCIENCE</label>
-                <h2 id="question-text" style="margin-top:10px;">Loading your question context...</h2>
-                
-                <div class="options-list" id="options-container">
-                    <!-- Dynamic rendering -->
-                </div>
-                
-                <button id="next-btn" style="display:none;" onclick="nextQuestion()">Next question →</button>
-            </div>
-        </div>
+    buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = 'default';
+    });
 
-        <!-- SCREEN 4: END LEADERBOARD -->
-        <div id="end-screen" class="screen">
-            <h1>Battle Complete</h1>
-            <p class="subtitle" id="end-status">What a battle.</p>
-            
-            <div class="card">
-                <h2>🏆 Final Leaderboard</h2>
-                <ul class="player-list" id="final-leaderboard">
-                    <!-- Dynamic scores -->
-                </ul>
-                <button onclick="goToScreen('home-screen')">← Home</button>
-                <button class="secondary" onclick="restartGame()">Play again ↻</button>
-            </div>
-        </div>
+    if (selectedIndex === question.a) {
+        score += 100 + Math.max(0, timeLeft * 5);
+        button.classList.add('correct');
+        button.style.borderColor = '#10b981';
+    } else {
+        button.style.background = 'rgba(239, 68, 68, 0.2)';
+        button.style.borderColor = '#ef4444';
+    }
 
-    </div>
+    buttons[question.a].classList.add('correct');
 
-    <script>
-        let score = 0;
-        let round = 1;
-        let demoPlayers = [];
-        const sampleQuestions = [
-            { q: "Which planet is known as the Red Planet?", cat: "SCIENCE", o: ["Earth", "Mars", "Jupiter", "Saturn"], a: 1 },
-            { q: "What is the capital city of Australia?", cat: "GEOGRAPHY", o: ["Sydney", "Melbourne", "Canberra", "Brisbane"], a: 2 },
-            { q: "Who painted the famous 'Mona Lisa'?", cat: "POP CULTURE", o: ["Van Gogh", "Da Vinci", "Picasso", "Monet"], a: 1 }
-        ];
-        let currentQIndex = 0;
+    document.getElementById('score-indicator').innerText =
+        `Score: ${score}`;
 
-        function goToScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
+    document.getElementById('next-btn').style.display = 'block';
+}
 
-        function toggleCategory(element) {
-            element.classList.toggle('selected');
-        }
+function revealAnswer() {
+    const question = sampleQuestions[currentQIndex];
+    const buttons = document.querySelectorAll('.option-btn');
 
-        function addDemoPlayer() {
-            const names = ["Alex_Pro", "TriviaBot", "ClashMaster", "Brainiac"];
-            if (demoPlayers.length < 4) {
-                const nextName = names[demoPlayers.length];
-                demoPlayers.push({ name: nextName, score: 0 });
-                const li = document.createElement('li');
-                li.className = 'player-item';
-                li.innerHTML = `<span>${nextName}</span><span style="color:var(--text-muted)">Joined</span>`;
-                document.getElementById('lobby-players').appendChild(li);
-                document.getElementById('player-count').innerText = 1 + demoPlayers.length;
-            }
-        }
+    buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = 'default';
+    });
 
-        function startTriviaGame() {
-            score = 0;
+    if (buttons[question.a]) {
+        buttons[question.a].classList.add('correct');
+    }
+
+    document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+    clearInterval(timerInterval);
+    currentQIndex++;
+    round = currentQIndex + 1;
+    showQuestion();
+}
+
+function endGame() {
+    clearInterval(timerInterval);
+
+    goToScreen('end-screen');
+
+    document.getElementById('end-status').innerText =
+        `You scored ${score} points!`;
+
+    const leaderboard = document.getElementById('final-leaderboard');
+    leaderboard.innerHTML = '';
+
+    const nickname =
+        document.getElementById('nickname-input').value.trim() || 'Player 1';
+
+    const players = [
+        { name: nickname, score: score },
+        ...demoPlayers
+    ];
+
+    players.sort((a, b) => b.score - a.score);
+
+    players.forEach((player, index) => {
+        const li = document.createElement('li');
+        li.className = 'player-item';
+
+        const name = document.createElement('span');
+        name.innerText = `${index + 1}. ${player.name}`;
+
+        const points = document.createElement('span');
+        points.innerText = `${player.score} pts`;
+
+        li.appendChild(name);
+        li.appendChild(points);
+        leaderboard.appendChild(li);
+    });
+}
+
+function restartGame() {
+    clearInterval(timerInterval);
+
+    score = 0;
+    round = 1;
+    currentQIndex = 0;
+
+    goToScreen('home-screen');
+}
