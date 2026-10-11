@@ -459,15 +459,18 @@ function listenToRoom(code) {
 
     renderRoom();
 
-    if (currentRoom.game?.status === "playing") {
-      showScreen("gameScreen");
-      renderGame();
-      maybeProcessRound();
-    } else if (currentRoom.game?.status === "finished") {
-      showResults();
-    } else {
-      showScreen("lobbyScreen");
-    }
+    renderRoom();
+
+if (currentRoom.game?.status === "playing") {
+  showScreen("gameScreen");
+  renderGame();
+  renderLeaderboard($("gameLeaderboard"));
+  maybeProcessRound();
+} else if (currentRoom.game?.status === "finished") {
+  showResults();
+} else {
+  showScreen("lobbyScreen");
+}
   }, error => {
     console.error("Room listener error:", error);
     alert("Room connection error: " + (error.message || error));
