@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Clash</title>
-
-<style>
+<title>Quiz Clash</title><style>
 :root {
   --bg: #0b1020;
   --panel: #141c31;
@@ -18,475 +15,153 @@
   --gold: #ffd166;
   --border: #303b59;
 }
-
-* {
-  box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at top, #20284a 0%, transparent 55%),
-    var(--bg);
+  background: radial-gradient(ellipse at top, #20284a 0%, transparent 55%), var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, sans-serif;
 }
-
-button, input, select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-}
-
-.app {
-  width: min(100%, 760px);
-  margin: auto;
-  padding: 18px 15px 40px;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 25px;
-}
-
-.logo {
-  font-size: 25px;
-  font-weight: 900;
-  letter-spacing: -1px;
-}
-
-.logo span {
-  color: var(--accent2);
-}
-
-.badge {
-  border: 1px solid var(--border);
-  background: var(--panel);
-  color: var(--muted);
-  border-radius: 20px;
-  padding: 7px 11px;
-  font-size: 12px;
-}
-
-.panel {
-  background: rgba(20, 28, 49, .96);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 12px 35px #0002;
-}
-
-h1 {
-  font-size: clamp(27px, 7vw, 42px);
-  line-height: 1.12;
-  margin: 0 0 12px;
-}
-
-h2 {
-  font-size: 21px;
-  margin: 0 0 14px;
-}
-
-p {
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-label {
-  display: block;
-  color: var(--muted);
-  font-size: 13px;
-  margin: 15px 0 7px;
-}
-
-input, select {
-  width: 100%;
-  padding: 13px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg);
-  color: var(--text);
-  outline: none;
-}
-
-input:focus, select:focus {
-  border-color: var(--accent);
-}
-
-button {
-  border: 0;
-  border-radius: 12px;
-  padding: 13px 15px;
-  font-weight: 750;
-  color: white;
-  background: var(--accent);
-  transition: transform .12s, opacity .12s;
-}
-
-button:active {
-  transform: scale(.98);
-}
-
-.primary {
-  width: 100%;
-  margin-top: 14px;
-  background: linear-gradient(110deg, var(--accent), #a15cff);
-}
-
-.secondary {
-  background: var(--panel2);
-  border: 1px solid var(--border);
-}
-
-.success {
-  background: #126d67;
-}
-
-.danger {
-  background: #62263b;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.muted {
-  color: var(--muted);
-}
-
-.small {
-  font-size: 12px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.notice {
-  padding: 12px;
-  border-radius: 12px;
-  background: #202b45;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
-  margin-top: 14px;
-}
-
-.error {
-  color: #ff8298;
-}
-
-.room-code {
-  font-size: 35px;
-  font-weight: 900;
-  letter-spacing: 7px;
-  text-align: center;
-  color: var(--accent2);
-  padding: 15px 0;
-  overflow-wrap: anywhere;
-}
-
-.player {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  background: var(--panel2);
-  border: 1px solid var(--border);
-  padding: 12px;
-  border-radius: 12px;
-  margin: 8px 0;
-}
-
-.player-name {
-  overflow-wrap: anywhere;
-  font-weight: 700;
-}
-
-.player-score {
-  font-weight: 900;
-  color: var(--gold);
-  white-space: nowrap;
-}
-
-.question-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.timer {
-  color: var(--accent2);
-  font-weight: 900;
-}
-
-.progress {
-  height: 6px;
-  border-radius: 20px;
-  background: var(--panel2);
-  overflow: hidden;
-  margin-bottom: 22px;
-}
-
-.progress-bar {
-  height: 100%;
-  width: 0;
-  background: linear-gradient(90deg, var(--accent), var(--accent2));
-  transition: width .3s;
-}
-
-.question {
-  font-size: clamp(21px, 5vw, 29px);
-  line-height: 1.4;
-  font-weight: 850;
-  margin: 18px 0 22px;
-  overflow-wrap: anywhere;
-}
-
-.answers {
-  display: grid;
-  gap: 11px;
-}
-
-.answer {
-  width: 100%;
-  text-align: left;
-  color: var(--text);
-  background: var(--panel2);
-  border: 1px solid var(--border);
-  min-height: 56px;
-  line-height: 1.4;
-}
-
-.answer.selected {
-  border-color: var(--accent2);
-  background: #163a42;
-}
-
-.answer:disabled {
-  opacity: 1;
-  cursor: default;
-}
-
-.leaderboard-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.rank {
-  width: 30px;
-  font-weight: 900;
-  color: var(--gold);
-}
-
-.spacer {
-  flex: 1;
-}
-
-.center {
-  text-align: center;
-}
-
-.status {
-  color: var(--accent2);
-  font-size: 13px;
-  margin-top: 13px;
-}
-
-footer {
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-  padding: 15px 0;
-}
-
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+.app { width: min(100%, 760px); margin: auto; padding: 18px 15px 40px; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 25px; }
+.logo { font-size: 25px; font-weight: 900; letter-spacing: -1px; }
+.logo span { color: var(--accent2); }
+.badge { border: 1px solid var(--border); background: var(--panel); color: var(--muted); border-radius: 20px; padding: 7px 11px; font-size: 12px; }
+.panel { background: rgba(20, 28, 49, .96); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 16px; box-shadow: 0 12px 35px #0002; }
+h1 { font-size: clamp(27px, 7vw, 42px); line-height: 1.12; margin: 0 0 12px; }
+h2 { font-size: 21px; margin: 0 0 14px; }
+p { color: var(--muted); line-height: 1.6; }
+label { display: block; color: var(--muted); font-size: 13px; margin: 15px 0 7px; }
+input, select { width: 100%; padding: 13px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); color: var(--text); outline: none; }
+input:focus, select:focus { border-color: var(--accent); }
+button { border: 0; border-radius: 12px; padding: 13px 15px; font-weight: 750; color: white; background: var(--accent); transition: transform .12s, opacity .12s; }
+button:active { transform: scale(.98); }
+.primary { width: 100%; margin-top: 14px; background: linear-gradient(110deg, var(--accent), #a15cff); }
+.secondary { background: var(--panel2); border: 1px solid var(--border); }
+.success { background: #126d67; }
+.danger { background: #62263b; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.hidden { display: none !important; }
+.notice { padding: 12px; border-radius: 12px; background: #202b45; color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 14px; overflow-wrap: anywhere; }
+.error { color: #ff8298; }
+.room-code { font-size: 35px; font-weight: 900; letter-spacing: 7px; text-align: center; color: var(--accent2); padding: 15px 0; overflow-wrap: anywhere; }
+.player { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--panel2); border: 1px solid var(--border); padding: 12px; border-radius: 12px; margin: 8px 0; }
+.player-name { overflow-wrap: anywhere; font-weight: 700; }
+.player-score { font-weight: 900; color: var(--gold); white-space: nowrap; }
+.question-top { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 18px; color: var(--muted); font-size: 13px; }
+.timer { color: var(--accent2); font-weight: 900; }
+.progress { height: 6px; border-radius: 20px; background: var(--panel2); overflow: hidden; margin-bottom: 22px; }
+.progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .3s; }
+.question { font-size: clamp(21px, 5vw, 29px); line-height: 1.4; font-weight: 850; margin: 18px 0 22px; overflow-wrap: anywhere; }
+.answers { display: grid; gap: 11px; }
+.answer { width: 100%; text-align: left; color: var(--text); background: var(--panel2); border: 1px solid var(--border); min-height: 56px; line-height: 1.4; }
+.answer.selected { border-color: var(--accent2); background: #163a42; }
+.answer:disabled { opacity: 1; cursor: default; }
+.leaderboard-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.rank { width: 30px; font-weight: 900; color: var(--gold); }
+.spacer { flex: 1; }
+.center { text-align: center; }
+.status { color: var(--accent2); font-size: 13px; margin-top: 13px; }
+footer { text-align: center; font-size: 12px; color: var(--muted); padding: 15px 0; }
 @media (max-width: 420px) {
-  .panel {
-    padding: 16px;
-    border-radius: 16px;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .logo {
-    font-size: 22px;
-  }
-
-  .room-code {
-    font-size: 29px;
-    letter-spacing: 5px;
-  }
+  .panel { padding: 16px; border-radius: 16px; }
+  .grid { grid-template-columns: 1fr; }
+  .logo { font-size: 22px; }
+  .room-code { font-size: 29px; letter-spacing: 5px; }
 }
-</style>
-</head>
-
+</style></head>
 <body>
 <div class="app">
-
 <header>
   <div class="logo">QUIZ <span>CLASH</span></div>
   <div class="badge">LIVE MULTIPLAYER</div>
-</header>
-
-<section id="loginScreen" class="panel">
+</header><section id="loginScreen" class="panel">
   <h1>Think fast.<br>Clash harder.</h1>
   <p>Challenge your friends in a real-time trivia battle. Every second counts!</p>
-
   <label for="playerName">Your player name</label>
   <input id="playerName" maxlength="20" placeholder="Enter your name">
-
   <button class="primary" id="continueBtn">Continue →</button>
-
-  <div id="loginMessage" class="notice">
-    Connecting to Quiz Clash...
-  </div>
-</section>
-
-<section id="homeScreen" class="hidden">
+  <div id="loginMessage" class="notice">Connecting to Quiz Clash...</div>
+</section><section id="homeScreen" class="hidden">
   <div class="panel">
     <h1>Ready to clash?</h1>
     <p>Create a room and invite your friends, or join a room using its code.</p>
-
     <button id="createBtn" class="primary">＋ Create a Room</button>
-
     <div style="height:20px"></div>
     <div style="border-top:1px solid var(--border)"></div>
-
     <label for="roomInput">Have a room code?</label>
-    <input id="roomInput" inputmode="numeric" maxlength="6"
-      placeholder="Enter 6-digit code">
-
+    <input id="roomInput" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit code">
     <button id="joinBtn" class="primary">Join Room →</button>
     <div id="homeMessage" class="notice hidden"></div>
   </div>
-</section>
-
-<section id="lobbyScreen" class="hidden">
+</section><section id="lobbyScreen" class="hidden">
   <div class="panel">
     <h2>Waiting room</h2>
     <p>Share this code with your friends so they can join your room.</p>
-
     <div id="roomCodeDisplay" class="room-code">------</div>
-    <button id="copyBtn" class="secondary" style="width:100%">
-      Copy Room Code
-    </button>
-
-    <div class="notice">
-      The host chooses the category and starts the match when everyone is ready.
-    </div>
+    <button id="copyBtn" class="secondary" style="width:100%">Copy Room Code</button>
+    <div class="notice">The host chooses the category and starts the match when everyone is ready.</div>
   </div>
-
   <div class="panel">
     <h2>Players <span id="playerCount" class="muted"></span></h2>
     <div id="lobbyPlayers"></div>
   </div>
-
   <div id="hostSettings" class="panel hidden">
     <h2>Match settings</h2>
-
     <label for="categorySelect">Choose quiz category</label>
     <select id="categorySelect">
       <option value="general">General Knowledge</option>
-      <option value="science">Science & Technology</option>
+      <option value="science">Science &amp; Technology</option>
       <option value="sports">Sports</option>
-      <option value="technology">Computers & Technology</option>
+      <option value="technology">Computers &amp; Technology</option>
     </select>
-
     <button id="startBtn" class="primary">Start 10-Round Battle →</button>
   </div>
-
   <div id="guestWaiting" class="panel hidden center">
     <h2>You're in!</h2>
     <p>Waiting for the host to start the match...</p>
   </div>
-
-  <button id="leaveBtn" class="secondary" style="width:100%">
-    Leave Room
-  </button>
-</section>
-
-<section id="gameScreen" class="hidden">
+  <button id="leaveBtn" class="secondary" style="width:100%">Leave Room</button>
+</section><section id="gameScreen" class="hidden">
   <div class="panel">
     <div class="question-top">
       <span id="roundLabel">ROUND 1 OF 10</span>
       <span class="timer" id="timerLabel">15 seconds</span>
     </div>
-
-    <div class="progress">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
     <div id="categoryLabel" class="badge">GENERAL KNOWLEDGE</div>
     <div id="questionText" class="question">Loading question...</div>
     <div id="answerButtons" class="answers"></div>
     <div id="answerStatus" class="status"></div>
   </div>
-
   <div class="panel">
     <h2>Live leaderboard</h2>
     <div id="gameLeaderboard"></div>
   </div>
-
   <div id="hostAdvancePanel" class="panel hidden">
     <p>All players have answered, or the timer has expired.</p>
     <button id="advanceBtn" class="primary">Continue →</button>
   </div>
-</section>
-
-<section id="resultScreen" class="hidden">
+</section><section id="resultScreen" class="hidden">
   <div class="panel center">
     <div style="font-size:44px">🏆</div>
     <h1 id="resultTitle">Game Over!</h1>
     <p id="resultSubtitle">Here are the final results.</p>
   </div>
-
   <div class="panel">
     <h2>Final leaderboard</h2>
     <div id="finalLeaderboard"></div>
   </div>
-
   <button id="homeBtn" class="primary">Back to Home</button>
-</section>
-
-<footer>
-  Quiz Clash · Real-time multiplayer trivia
-</footer>
-
-</div>
-
-<!-- Firebase browser-compatible SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-
-<script>
+</section><footer>Quiz Clash · Real-time multiplayer trivia</footer>
+</div><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script><script>
 "use strict";
-
-/* -------------------------------------------------------
-   FIREBASE CONFIGURATION
-------------------------------------------------------- */
 
 const firebaseConfig = {
   apiKey: "AIzaSyBVzqgts3aMeAPyX_-Woi_Ax9w3TNQTig",
@@ -499,16 +174,20 @@ const firebaseConfig = {
   measurementId: "G-6TB49RBJSE"
 };
 
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.database();
+let app, auth, db;
 
-/* -------------------------------------------------------
-   QUESTION BANK
+const $ = id => document.getElementById(id);
 
-   Each category has ten regular questions and two
-   additional questions available for sudden death.
-------------------------------------------------------- */
+try {
+  app = firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  db = firebase.database();
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+  $("loginMessage").textContent =
+    "Firebase initialization error: " + (error.message || String(error));
+  $("loginMessage").classList.add("error");
+}
 
 const QUESTIONS = {
   general: [
@@ -525,7 +204,6 @@ const QUESTIONS = {
     {q:"Which planet is famous for its prominent rings?",a:["Mercury","Venus","Saturn","Mars"],c:2},
     {q:"Which instrument measures temperature?",a:["Barometer","Thermometer","Compass","Hygrometer"],c:1}
   ],
-
   science: [
     {q:"What is the chemical formula for water?",a:["CO2","H2O","O2","NaCl"],c:1},
     {q:"Which planet is known as the Red Planet?",a:["Venus","Mars","Neptune","Mercury"],c:1},
@@ -540,7 +218,6 @@ const QUESTIONS = {
     {q:"Which particles carry a negative electric charge?",a:["Protons","Neutrons","Electrons","Photons"],c:2},
     {q:"Which part of a plant primarily absorbs water from soil?",a:["Flowers","Roots","Fruit","Leaves"],c:1}
   ],
-
   sports: [
     {q:"How many players from one team are on the field in football (soccer)?",a:["9","10","11","12"],c:2},
     {q:"How many rings appear on the Olympic symbol?",a:["Four","Five","Six","Seven"],c:1},
@@ -555,7 +232,6 @@ const QUESTIONS = {
     {q:"How many players from one team are on court in volleyball?",a:["Five","Six","Seven","Eight"],c:1},
     {q:"Which colour jersey is traditionally worn by the leader of the Tour de France?",a:["Green","Yellow","Red","White"],c:1}
   ],
-
   technology: [
     {q:"What does CPU stand for?",a:["Central Processing Unit","Computer Power Utility","Core Program Upload","Central Program User"],c:0},
     {q:"Which language is widely used for web page structure?",a:["HTML","SQL","Python","Bash"],c:0},
@@ -572,10 +248,6 @@ const QUESTIONS = {
   ]
 };
 
-/* -------------------------------------------------------
-   APP STATE
-------------------------------------------------------- */
-
 let currentUser = null;
 let currentName = "";
 let currentRoomCode = null;
@@ -587,17 +259,9 @@ let timerInterval = null;
 let processingRound = false;
 let authReady = false;
 
-const $ = id => document.getElementById(id);
-
 function showScreen(id) {
-  [
-    "loginScreen",
-    "homeScreen",
-    "lobbyScreen",
-    "gameScreen",
-    "resultScreen"
-  ].forEach(screen => $(screen).classList.add("hidden"));
-
+  ["loginScreen","homeScreen","lobbyScreen","gameScreen","resultScreen"]
+    .forEach(screen => $(screen).classList.add("hidden"));
   $(id).classList.remove("hidden");
 }
 
@@ -607,94 +271,73 @@ function message(id, text, isError = false) {
   element.classList.remove("hidden");
   element.classList.toggle("error", isError);
 }
-
-function clearMessage(id) {
-  $(id).classList.add("hidden");
-}
+function clearMessage(id) { $(id).classList.add("hidden"); }
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
   })[character]);
 }
 
 function isHost() {
-  return !!(
-    currentRoom &&
-    currentUser &&
-    currentRoom.hostUid === currentUser.uid
-  );
+  return !!(currentRoom && currentUser && currentRoom.hostUid === currentUser.uid);
 }
-
 function getPlayers() {
   return Object.entries(currentRoom?.players || {})
     .map(([uid, player]) => ({uid, ...player}))
-    .sort((a, b) => (b.score || 0) - (a.score || 0));
+    .sort((a,b) => (b.score || 0) - (a.score || 0));
 }
-
 function categoryQuestions() {
-  const category = currentRoom?.game?.category || "general";
-  return QUESTIONS[category] || QUESTIONS.general;
+  return QUESTIONS[currentRoom?.game?.category || "general"] || QUESTIONS.general;
 }
-
 function getQuestion() {
-  const index = currentRoom?.game?.questionIndex || 0;
-  return categoryQuestions()[index];
+  return categoryQuestions()[currentRoom?.game?.questionIndex || 0];
 }
 
-/* -------------------------------------------------------
-   AUTHENTICATION
-------------------------------------------------------- */
+/* Authentication: show the exact Firebase error on screen. */
+if (auth) {
+  auth.onAuthStateChanged(async user => {
+    if (user) {
+      currentUser = user;
+      authReady = true;
+      $("loginMessage").textContent = "Connected to Firebase. Enter your name to continue.";
+      $("loginMessage").classList.remove("error");
 
-auth.onAuthStateChanged(async user => {
-  if (!user) {
+      const savedName = localStorage.getItem("quizClashName");
+      if (savedName) $("playerName").value = savedName;
+
+      if (currentName) showScreen(currentRoomCode ? "lobbyScreen" : "homeScreen");
+      return;
+    }
+
     try {
+      $("loginMessage").textContent = "Signing in to Firebase...";
       await auth.signInAnonymously();
     } catch (error) {
-      $("loginMessage").textContent =
-        "Could not sign in. Check Firebase Anonymous Authentication and try again.";
-      console.error(error);
+      console.error("Firebase sign-in error:", error);
+      const code = error.code || "unknown-error";
+      const details = error.message || "No additional details available.";
+      message("loginMessage", "Sign-in error: " + code + " — " + details, true);
     }
-    return;
-  }
-
-  currentUser = user;
-  authReady = true;
-  $("loginMessage").textContent = "Connected to Firebase. Enter your name to continue.";
-
-  const savedName = localStorage.getItem("quizClashName");
-  if (savedName) $("playerName").value = savedName;
-
-  if (currentName) {
-    showScreen(currentRoomCode ? "lobbyScreen" : "homeScreen");
-  }
-});
+  });
+}
 
 $("continueBtn").addEventListener("click", () => {
   if (!authReady || !currentUser) {
-    message("loginMessage", "Still connecting. Please wait a moment.", true);
+    message("loginMessage", "Still connecting. Please wait. If this continues, check the sign-in error shown here.", true);
     return;
   }
 
   const name = $("playerName").value.trim();
-
   if (name.length < 2) {
     message("loginMessage", "Please enter a name with at least 2 characters.", true);
     return;
   }
 
-  currentName = name.slice(0, 20);
+  currentName = name.slice(0,20);
   localStorage.setItem("quizClashName", currentName);
   showScreen("homeScreen");
 });
-
-/* -------------------------------------------------------
-   ROOM CREATION AND JOINING
-------------------------------------------------------- */
 
 function generateRoomCode() {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -702,7 +345,6 @@ function generateRoomCode() {
 
 async function createRoom() {
   if (!currentUser) return;
-
   $("createBtn").disabled = true;
   message("homeMessage", "Creating your room...");
 
@@ -711,11 +353,8 @@ async function createRoom() {
     let attempts = 0;
 
     while (attempts < 5) {
-      const ref = db.ref("rooms/" + code);
-      const snapshot = await ref.once("value");
-
+      const snapshot = await db.ref("rooms/" + code).once("value");
       if (!snapshot.exists()) break;
-
       code = generateRoomCode();
       attempts++;
     }
@@ -726,30 +365,21 @@ async function createRoom() {
       status: "lobby",
       category: "general",
       players: {
-        [currentUser.uid]: {
-          name: currentName,
-          score: 0,
-          joinedAt: Date.now()
-        }
+        [currentUser.uid]: {name:currentName,score:0,joinedAt:Date.now()}
       },
       game: {
-        category: "general",
-        questionIndex: 0,
-        startAt: 0,
-        status: "lobby",
-        roundDuration: 15,
-        suddenDeath: false
+        category:"general",questionIndex:0,startAt:0,
+        status:"lobby",roundDuration:15,suddenDeath:false
       },
-      answers: {}
+      answers:{}
     };
 
     await db.ref("rooms/" + code).set(room);
-
     clearMessage("homeMessage");
     listenToRoom(code);
   } catch (error) {
-    console.error(error);
-    message("homeMessage", "Could not create room. Check your database rules.", true);
+    console.error("Create room error:", error);
+    message("homeMessage", "Could not create room: " + (error.message || error), true);
   } finally {
     $("createBtn").disabled = false;
   }
@@ -757,51 +387,46 @@ async function createRoom() {
 
 async function joinRoom() {
   if (!currentUser) return;
-
   const code = $("roomInput").value.trim();
 
   if (!/^\d{6}$/.test(code)) {
-    message("homeMessage", "Enter a valid 6-digit room code.", true);
+    message("homeMessage","Enter a valid 6-digit room code.",true);
     return;
   }
 
   $("joinBtn").disabled = true;
-  message("homeMessage", "Joining room...");
+  message("homeMessage","Joining room...");
 
   try {
     const ref = db.ref("rooms/" + code);
     const snapshot = await ref.once("value");
 
     if (!snapshot.exists()) {
-      message("homeMessage", "Room not found. Check the code.", true);
+      message("homeMessage","Room not found. Check the code.",true);
       return;
     }
 
     const room = snapshot.val();
-
     if (room.status !== "lobby") {
-      message("homeMessage", "This game has already started.", true);
+      message("homeMessage","This game has already started.",true);
       return;
     }
 
     const players = room.players || {};
-
     if (!players[currentUser.uid] && Object.keys(players).length >= 12) {
-      message("homeMessage", "This room is full. Maximum 12 players.", true);
+      message("homeMessage","This room is full. Maximum 12 players.",true);
       return;
     }
 
     await ref.child("players/" + currentUser.uid).set({
-      name: currentName,
-      score: 0,
-      joinedAt: Date.now()
+      name:currentName,score:0,joinedAt:Date.now()
     });
 
     clearMessage("homeMessage");
     listenToRoom(code);
   } catch (error) {
-    console.error(error);
-    message("homeMessage", "Could not join. Check your internet and database rules.", true);
+    console.error("Join room error:", error);
+    message("homeMessage","Could not join: " + (error.message || error),true);
   } finally {
     $("joinBtn").disabled = false;
   }
@@ -809,7 +434,6 @@ async function joinRoom() {
 
 function listenToRoom(code) {
   stopRoomListener();
-
   currentRoomCode = code;
   roomRef = db.ref("rooms/" + code);
 
@@ -819,7 +443,7 @@ function listenToRoom(code) {
       currentRoomCode = null;
       currentRoom = null;
       showScreen("homeScreen");
-      message("homeMessage", "This room no longer exists.", true);
+      message("homeMessage","This room no longer exists.",true);
       return;
     }
 
@@ -829,7 +453,7 @@ function listenToRoom(code) {
       stopRoomListener();
       currentRoomCode = null;
       showScreen("homeScreen");
-      message("homeMessage", "You are no longer in this room.", true);
+      message("homeMessage","You are no longer in this room.",true);
       return;
     }
 
@@ -845,86 +469,64 @@ function listenToRoom(code) {
       showScreen("lobbyScreen");
     }
   }, error => {
-    console.error(error);
-    alert("Room connection lost. Check your internet connection.");
+    console.error("Room listener error:", error);
+    alert("Room connection error: " + (error.message || error));
   });
 }
 
 function stopRoomListener() {
-  if (roomRef && roomListener) {
-    roomRef.off("value", roomListener);
-  }
-
+  if (roomRef && roomListener) roomRef.off("value",roomListener);
   roomRef = null;
   roomListener = null;
-
   if (timerInterval) {
     clearInterval(timerInterval);
     timerInterval = null;
   }
 }
 
-/* -------------------------------------------------------
-   LOBBY
-------------------------------------------------------- */
-
 function renderRoom() {
   if (!currentRoom) return;
-
   $("roomCodeDisplay").textContent = currentRoomCode;
 
   const players = Object.entries(currentRoom.players || {});
   $("playerCount").textContent = "(" + players.length + "/12)";
-
-  $("lobbyPlayers").innerHTML = players.map(([uid, player]) => `
+  $("lobbyPlayers").innerHTML = players.map(([uid,player]) => `
     <div class="player">
-      <span class="player-name">
-        ${escapeHtml(player.name)}
-        ${uid === currentRoom.hostUid ? " 👑" : ""}
-      </span>
+      <span class="player-name">${escapeHtml(player.name)} ${uid === currentRoom.hostUid ? " 👑" : ""}</span>
       <span class="badge">${uid === currentUser.uid ? "YOU" : "READY"}</span>
     </div>
   `).join("");
 
-  $("hostSettings").classList.toggle("hidden", !isHost());
-  $("guestWaiting").classList.toggle("hidden", isHost());
-
-  if (isHost()) {
-    $("categorySelect").value = currentRoom.game?.category || "general";
-  }
+  $("hostSettings").classList.toggle("hidden",!isHost());
+  $("guestWaiting").classList.toggle("hidden",isHost());
+  if (isHost()) $("categorySelect").value = currentRoom.game?.category || "general";
 }
 
-$("createBtn").addEventListener("click", createRoom);
-$("joinBtn").addEventListener("click", joinRoom);
+$("createBtn").addEventListener("click",createRoom);
+$("joinBtn").addEventListener("click",joinRoom);
 
-$("copyBtn").addEventListener("click", async () => {
+$("copyBtn").addEventListener("click",async () => {
   try {
     await navigator.clipboard.writeText(currentRoomCode);
     $("copyBtn").textContent = "Copied!";
-    setTimeout(() => $("copyBtn").textContent = "Copy Room Code", 1500);
+    setTimeout(() => $("copyBtn").textContent = "Copy Room Code",1500);
   } catch {
-    prompt("Copy this room code:", currentRoomCode);
+    prompt("Copy this room code:",currentRoomCode);
   }
 });
 
-$("categorySelect").addEventListener("change", async () => {
-  if (!isHost()) return;
-
-  const category = $("categorySelect").value;
-
+$("categorySelect").addEventListener("change",async () => {
+  if (!isHost() || !roomRef) return;
   try {
-    await roomRef.child("game/category").set(category);
+    await roomRef.child("game/category").set($("categorySelect").value);
   } catch (error) {
-    console.error(error);
+    console.error("Category update error:",error);
   }
 });
 
-$("startBtn").addEventListener("click", async () => {
+$("startBtn").addEventListener("click",async () => {
   if (!isHost()) return;
-
-  const players = getPlayers();
-
-  if (players.length < 2) {
+  if (getPlayers().length < 2) {
     alert("Invite at least one friend before starting.");
     return;
   }
@@ -932,42 +534,26 @@ $("startBtn").addEventListener("click", async () => {
   const category = $("categorySelect").value;
 
   try {
-    await roomRef.update({
-      status: "playing",
-      answers: {}
+    const playersSnapshot = await roomRef.child("players").get();
+    const scoreUpdates = {};
+    playersSnapshot.forEach(child => {
+      scoreUpdates[child.key + "/score"] = 0;
     });
-
-    await roomRef.child("players").get().then(snapshot => {
-      const updates = {};
-
-      snapshot.forEach(child => {
-        updates[child.key + "/score"] = 0;
-      });
-
-      return roomRef.child("players").update(updates);
-    });
-
+    await roomRef.child("players").update(scoreUpdates);
+    await roomRef.child("answers").set({});
+    await roomRef.update({status:"playing"});
     await roomRef.child("game").set({
-      category,
-      questionIndex: 0,
-      startAt: Date.now(),
-      roundDuration: 15,
-      suddenDeath: false,
-      status: "playing"
+      category,questionIndex:0,startAt:Date.now(),
+      roundDuration:15,suddenDeath:false,status:"playing"
     });
   } catch (error) {
-    console.error(error);
-    alert("Could not start the game. Please check your database rules.");
+    console.error("Start game error:",error);
+    alert("Could not start: " + (error.message || error));
   }
 });
 
-/* -------------------------------------------------------
-   GAME AND SCORING
-------------------------------------------------------- */
-
 function renderGame() {
   if (!currentRoom?.game) return;
-
   const game = currentRoom.game;
   const question = getQuestion();
 
@@ -977,65 +563,51 @@ function renderGame() {
   }
 
   selectedAnswer = currentRoom.answers?.[currentUser.uid]?.choice ?? null;
-
   const round = game.questionIndex + 1;
 
   $("roundLabel").textContent = game.suddenDeath
     ? "SUDDEN DEATH · QUESTION " + (game.questionIndex - 9)
     : "ROUND " + round + " OF 10";
 
-  $("categoryLabel").textContent =
-    game.category.replace(/^\w/, c => c.toUpperCase());
-
+  $("categoryLabel").textContent = game.category.replace(/^\w/,c => c.toUpperCase());
   $("questionText").textContent = question.q;
+  $("progressBar").style.width = Math.min(100,game.suddenDeath ? 100 : round*10) + "%";
 
-  $("progressBar").style.width =
-    Math.min(100, game.suddenDeath ? 100 : round * 10) + "%";
-
-  $("answerButtons").innerHTML = question.a.map((answer, index) => `
+  $("answerButtons").innerHTML = question.a.map((answer,index) => `
     <button class="answer ${selectedAnswer === index ? "selected" : ""}"
-      data-choice="${index}"
-      ${selectedAnswer !== null ? "disabled" : ""}>
-      ${String.fromCharCode(65 + index)}. ${escapeHtml(answer)}
+      data-choice="${index}" ${selectedAnswer !== null ? "disabled" : ""}>
+      ${String.fromCharCode(65+index)}. ${escapeHtml(answer)}
     </button>
   `).join("");
 
   document.querySelectorAll(".answer[data-choice]").forEach(button => {
-    button.addEventListener("click", () => {
-      submitAnswer(Number(button.dataset.choice));
-    });
+    button.addEventListener("click",() => submitAnswer(Number(button.dataset.choice)));
   });
 
   $("answerStatus").textContent = selectedAnswer !== null
     ? "Answer submitted. Waiting for other players..."
     : "Choose your answer before time runs out.";
 
-  $("hostAdvancePanel").classList.toggle("hidden", !isHost());
-
+  $("hostAdvancePanel").classList.toggle("hidden",!isHost());
   renderLeaderboard($("gameLeaderboard"));
   startTimer();
 }
 
 async function submitAnswer(choice) {
-  if (!currentRoom || !currentRoom.game || selectedAnswer !== null) return;
-  if (currentRoom.game.status !== "playing") return;
-
+  if (!currentRoom?.game || selectedAnswer !== null || currentRoom.game.status !== "playing") return;
   const question = getQuestion();
   if (!question || choice < 0 || choice >= question.a.length) return;
 
   selectedAnswer = choice;
-
   try {
     await roomRef.child("answers/" + currentUser.uid).set({
-      choice,
-      answeredAt: Date.now()
+      choice,answeredAt:Date.now()
     });
-
     renderGame();
     maybeProcessRound();
   } catch (error) {
-    console.error(error);
-    $("answerStatus").textContent = "Could not submit answer. Try again.";
+    console.error("Submit answer error:",error);
+    $("answerStatus").textContent = "Could not submit answer. " + (error.message || "Try again.");
   }
 }
 
@@ -1044,11 +616,9 @@ function startTimer() {
 
   const updateTimer = () => {
     if (!currentRoom?.game || currentRoom.game.status !== "playing") return;
-
     const startAt = currentRoom.game.startAt || Date.now();
     const duration = currentRoom.game.roundDuration || 15;
-    const remaining = Math.max(0, duration - (Date.now() - startAt) / 1000);
-
+    const remaining = Math.max(0,duration-(Date.now()-startAt)/1000);
     $("timerLabel").textContent = Math.ceil(remaining) + " seconds";
 
     if (remaining <= 0) {
@@ -1059,20 +629,24 @@ function startTimer() {
   };
 
   updateTimer();
-  timerInterval = setInterval(updateTimer, 250);
+  timerInterval = setInterval(updateTimer,250);
 }
 
+/*
+ * Host processes a round once all players have answered or time expires.
+ * Score calculations use the latest database data. The tie check below
+ * includes the points earned in the current round.
+ */
 async function maybeProcessRound() {
-  if (!isHost() || !currentRoom?.game) return;
-  if (currentRoom.game.status !== "playing" || processingRound) return;
+  if (!isHost() || !currentRoom?.game || processingRound) return;
+  if (currentRoom.game.status !== "playing") return;
 
   const players = Object.keys(currentRoom.players || {});
   const answers = currentRoom.answers || {};
   const startAt = currentRoom.game.startAt || Date.now();
   const duration = currentRoom.game.roundDuration || 15;
-  const expired = Date.now() >= startAt + duration * 1000;
-  const everyoneAnswered = players.length > 0 &&
-    players.every(uid => answers[uid] !== undefined);
+  const expired = Date.now() >= startAt + duration*1000;
+  const everyoneAnswered = players.length > 0 && players.every(uid => answers[uid] !== undefined);
 
   if (!expired && !everyoneAnswered) return;
 
@@ -1084,7 +658,6 @@ async function maybeProcessRound() {
     if (!latest.exists()) return;
 
     const room = latest.val();
-
     if (room.game.status !== "playing") return;
 
     const index = room.game.questionIndex;
@@ -1096,116 +669,86 @@ async function maybeProcessRound() {
     }
 
     const currentAnswers = room.answers || {};
-    const scoreUpdates = {};
+    const playersData = room.players || {};
+    const newScores = {};
 
-    for (const [uid, player] of Object.entries(room.players || {})) {
+    for (const [uid,player] of Object.entries(playersData)) {
+      let score = player.score || 0;
       const answer = currentAnswers[uid];
 
       if (answer && answer.choice === question.c) {
-        const elapsed = Math.max(
-          0,
-          (answer.answeredAt - room.game.startAt) / 1000
-        );
-
-        const speedBonus = Math.max(
-          0,
-          Math.round(50 * (1 - elapsed / room.game.roundDuration))
-        );
-
-        scoreUpdates[uid + "/score"] =
-          (player.score || 0) + 100 + speedBonus;
+        const elapsed = Math.max(0,(answer.answeredAt-room.game.startAt)/1000);
+        const speedBonus = Math.max(0,Math.round(50*(1-elapsed/(room.game.roundDuration || 15))));
+        score += 100 + speedBonus;
       }
+      newScores[uid] = score;
     }
 
-    if (Object.keys(scoreUpdates).length) {
-      await roomRef.child("players").update(scoreUpdates);
+    const updates = {};
+    for (const [uid,score] of Object.entries(newScores)) {
+      updates[uid + "/score"] = score;
     }
+    await roomRef.child("players").update(updates);
 
     const isSuddenDeath = !!room.game.suddenDeath;
     const nextIndex = index + 1;
+    const scores = Object.values(newScores);
+    const highest = scores.length ? Math.max(...scores) : 0;
+    const leaders = scores.filter(score => score === highest).length;
+    const tied = leaders > 1;
 
     if (!isSuddenDeath && nextIndex >= 10) {
-      const scores = Object.values(room.players || {}).map(p => p.score || 0);
-      const maxScore = Math.max(...scores);
-      const tied = scores.filter(score => score === maxScore).length > 1;
-
       if (tied) {
-        await roomRef.child("game").update({
-          suddenDeath: true,
-          questionIndex: 10,
-          startAt: Date.now(),
-          status: "playing"
-        });
-
         await roomRef.child("answers").set({});
+        await roomRef.child("game").update({
+          suddenDeath:true,questionIndex:10,startAt:Date.now(),status:"playing"
+        });
       } else {
         await finishGame();
       }
     } else if (isSuddenDeath) {
-      const scores = Object.values(room.players || {}).map(p => p.score || 0);
-      const maxScore = Math.max(...scores);
-      const tied = scores.filter(score => score === maxScore).length > 1;
-
       if (!tied) {
         await finishGame();
       } else if (nextIndex < QUESTIONS[room.game.category].length) {
-        await roomRef.child("game").update({
-          questionIndex: nextIndex,
-          startAt: Date.now()
-        });
-
         await roomRef.child("answers").set({});
+        await roomRef.child("game").update({
+          questionIndex:nextIndex,startAt:Date.now()
+        });
       } else {
         await finishGame();
       }
     } else {
-      await roomRef.child("game").update({
-        questionIndex: nextIndex,
-        startAt: Date.now()
-      });
-
       await roomRef.child("answers").set({});
+      await roomRef.child("game").update({
+        questionIndex:nextIndex,startAt:Date.now()
+      });
     }
   } catch (error) {
-    console.error("Round processing error:", error);
-    alert("There was a problem processing the round. Please check your connection.");
+    console.error("Round processing error:",error);
+    alert("Round processing error: " + (error.message || error));
   } finally {
     processingRound = false;
     $("advanceBtn").disabled = false;
   }
 }
 
-$("advanceBtn").addEventListener("click", maybeProcessRound);
+$("advanceBtn").addEventListener("click",maybeProcessRound);
 
 async function finishGame() {
   if (!isHost() || !roomRef) return;
-
   try {
-    await roomRef.child("game").update({
-      status: "finished",
-      finishedAt: Date.now()
-    });
-
+    await roomRef.child("game").update({status:"finished",finishedAt:Date.now()});
     await roomRef.child("status").set("finished");
   } catch (error) {
-    console.error(error);
+    console.error("Finish game error:",error);
   }
 }
 
-/* -------------------------------------------------------
-   LEADERBOARD AND RESULTS
-------------------------------------------------------- */
-
 function renderLeaderboard(container) {
-  const players = getPlayers();
-
-  container.innerHTML = players.map((player, index) => `
+  container.innerHTML = getPlayers().map((player,index) => `
     <div class="leaderboard-row">
-      <span class="rank">${index + 1}</span>
-      <span class="player-name">
-        ${escapeHtml(player.name)}
-        ${player.uid === currentUser.uid ? " (You)" : ""}
-      </span>
+      <span class="rank">${index+1}</span>
+      <span class="player-name">${escapeHtml(player.name)} ${player.uid === currentUser.uid ? "(You)" : ""}</span>
       <span class="spacer"></span>
       <span class="player-score">${player.score || 0} pts</span>
     </div>
@@ -1214,25 +757,18 @@ function renderLeaderboard(container) {
 
 function showResults() {
   if (!currentRoom) return;
-
   showScreen("resultScreen");
 
   const players = getPlayers();
-  const highestScore = players.length
-    ? Math.max(...players.map(p => p.score || 0))
-    : 0;
-
+  const highestScore = players.length ? Math.max(...players.map(p => p.score || 0)) : 0;
   const winners = players.filter(p => (p.score || 0) === highestScore);
 
   if (winners.length === 1) {
     $("resultTitle").textContent = "🏆 " + winners[0].name + " Wins!";
-    $("resultSubtitle").textContent =
-      "Congratulations! Final score: " + highestScore + " points.";
+    $("resultSubtitle").textContent = "Congratulations! Final score: " + highestScore + " points.";
   } else if (winners.length > 1) {
     $("resultTitle").textContent = "It's a Tie!";
-    $("resultSubtitle").textContent =
-      winners.map(p => p.name).join(" and ") +
-      " finished with " + highestScore + " points.";
+    $("resultSubtitle").textContent = winners.map(p => p.name).join(" and ") + " finished with " + highestScore + " points.";
   } else {
     $("resultTitle").textContent = "Game Over!";
     $("resultSubtitle").textContent = "Thanks for playing Quiz Clash.";
@@ -1240,10 +776,6 @@ function showResults() {
 
   renderLeaderboard($("finalLeaderboard"));
 }
-
-/* -------------------------------------------------------
-   LEAVING AND CLEANUP
-------------------------------------------------------- */
 
 async function leaveRoom() {
   if (!currentRoomCode || !currentUser) {
@@ -1253,44 +785,30 @@ async function leaveRoom() {
 
   const code = currentRoomCode;
   const room = currentRoom;
-
   stopRoomListener();
 
   try {
     if (room?.hostUid === currentUser.uid) {
       await db.ref("rooms/" + code).remove();
     } else {
-      await db.ref(
-        "rooms/" + code + "/players/" + currentUser.uid
-      ).remove();
-
-      await db.ref(
-        "rooms/" + code + "/answers/" + currentUser.uid
-      ).remove();
+      await db.ref("rooms/" + code + "/players/" + currentUser.uid).remove();
+      await db.ref("rooms/" + code + "/answers/" + currentUser.uid).remove();
     }
   } catch (error) {
-    console.error("Leave room error:", error);
+    console.error("Leave room error:",error);
   }
 
   currentRoomCode = null;
   currentRoom = null;
   selectedAnswer = null;
   processingRound = false;
-
   showScreen("homeScreen");
 }
 
-$("leaveBtn").addEventListener("click", async () => {
+$("leaveBtn").addEventListener("click",async () => {
   if (confirm("Leave this room?")) await leaveRoom();
 });
-
-$("homeBtn").addEventListener("click", async () => {
-  await leaveRoom();
-});
-
-window.addEventListener("beforeunload", stopRoomListener);
-
-/* Keep the room view synchronized with current game state. */
-</script>
-</body>
-  </html>
+$("homeBtn").addEventListener("click",leaveRoom);
+window.addEventListener("beforeunload",stopRoomListener);
+</script></body>
+</html>
