@@ -1,163 +1,939 @@
-function startTriviaGame() {
-    score = 0;
-    round = 1;
-    currentQIndex = 0;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Clash</title>
 
-    document.getElementById('score-indicator').innerText = 'Score: 0';
-    goToScreen('game-screen');
-    showQuestion();
+<style>
+:root {
+  --bg: #090d1a;
+  --panel: #141b30;
+  --panel2: #202a45;
+  --text: #f5f7ff;
+  --muted: #a6b1cc;
+  --accent: #8b5cf6;
+  --cyan: #22d3ee;
+  --green: #34d399;
+  --red: #fb7185;
+  --border: #303b5b;
 }
 
-function showQuestion() {
-    if (currentQIndex >= sampleQuestions.length) {
-        endGame();
-        return;
-    }
-
-    const question = sampleQuestions[currentQIndex];
-
-    document.getElementById('round-indicator').innerText =
-        `ROUND ${currentQIndex + 1} OF ${sampleQuestions.length}`;
-
-    document.getElementById('game-category').innerText = question.cat;
-    document.getElementById('question-text').innerText = question.q;
-
-    const container = document.getElementById('options-container');
-    container.innerHTML = '';
-
-    document.getElementById('next-btn').style.display = 'none';
-
-    question.o.forEach((option, index) => {
-        const button = document.createElement('button');
-        button.className = 'option-btn';
-        button.innerText = option;
-
-        button.onclick = function () {
-            checkAnswer(index, button);
-        };
-
-        container.appendChild(button);
-    });
-
-    startTimer();
+* {
+  box-sizing: border-box;
 }
 
-let timerInterval;
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at top, #202047 0%, var(--bg) 65%);
+  color: var(--text);
+  font-family: system-ui, Arial, sans-serif;
+  min-height: 100vh;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  transition: transform .15s, opacity .15s;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+.app {
+  width: min(100%, 760px);
+  margin: auto;
+  padding: 18px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.logo {
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.logo span {
+  color: var(--cyan);
+}
+
+.badge {
+  border: 1px solid var(--border);
+  background: #141b30;
+  padding: 7px 11px;
+  border-radius: 99px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+  animation: appear .25s ease;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel {
+  background: rgba(20, 27, 48, .96);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 22px;
+  margin-bottom: 16px;
+  box-shadow: 0 14px 35px #0002;
+}
+
+.hero {
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: clamp(32px, 8vw, 52px);
+  line-height: 1.05;
+  margin: 14px 0;
+  letter-spacing: -2px;
+}
+
+h2 {
+  font-size: 23px;
+  margin: 0 0 12px;
+}
+
+p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.primary {
+  color: #fff;
+  background: linear-gradient(120deg, var(--accent), #6366f1);
+  border-radius: 13px;
+  padding: 14px 18px;
+  font-weight: 800;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.secondary {
+  color: var(--text);
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 13px 16px;
+  font-weight: 700;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.small {
+  width: auto;
+  padding: 9px 12px;
+  margin: 0;
+  font-size: 13px;
+}
+
+input, select {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: #0c1224;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  margin: 9px 0 14px;
+}
+
+input:focus, select:focus {
+  border-color: var(--cyan);
+}
+
+label {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.stat {
+  background: #0c1224;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 13px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 24px;
+}
+
+.stat span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.room-code {
+  font-size: 35px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  text-align: center;
+  color: var(--cyan);
+  padding: 14px;
+  background: #0c1224;
+  border-radius: 14px;
+  margin: 12px 0;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #0c1224;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.player small {
+  color: var(--muted);
+}
+
+.question-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.timer {
+  height: 7px;
+  background: #303b5b;
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.timer-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--green), var(--cyan));
+  transition: width .2s linear;
+}
+
+.answers {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.answer {
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 14px;
+  text-align: left;
+  font-weight: 700;
+  min-height: 56px;
+  width: 100%;
+}
+
+.answer.correct {
+  border-color: var(--green);
+  background: #104536;
+}
+
+.answer.wrong {
+  border-color: var(--red);
+  background: #512638;
+}
+
+.answer.selected {
+  border-color: var(--cyan);
+}
+
+.feedback {
+  padding: 13px;
+  background: #0c1224;
+  border-radius: 12px;
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td, th {
+  padding: 12px 7px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+th {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+td:last-child, th:last-child {
+  text-align: right;
+}
+
+.notice {
+  color: var(--muted);
+  text-align: center;
+  font-size: 12px;
+  margin: 18px 0 8px;
+}
+
+footer {
+  color: #687591;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 12px;
+}
+
+@media (max-width: 420px) {
+  .app { padding: 12px; }
+  .panel { padding: 17px; border-radius: 18px; }
+  h2 { font-size: 21px; }
+  .grid { gap: 8px; }
+  .answer { padding: 14px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+  <div class="logo">QUIZ <span>CLASH</span></div>
+  <div class="badge">⚡ 10 ROUND BATTLE</div>
+</header>
+
+<!-- HOME -->
+<section id="home" class="screen active">
+  <div class="panel hero">
+    <div class="eyebrow">Think fast. Score big.</div>
+    <h1>Welcome to<br><span style="color:var(--cyan)">Quiz Clash.</span></h1>
+    <p>Ten rounds. Tough questions. Speed bonuses.<br>Only one champion.</p>
+    <button class="primary" onclick="showScreen('setup')">
+      🎮 Start a Battle
+    </button>
+    <button class="secondary" onclick="showRules()">
+      How to Play
+    </button>
+  </div>
+
+  <div class="grid">
+    <div class="stat">
+      <strong>10</strong>
+      <span>Quiz rounds</span>
+    </div>
+    <div class="stat">
+      <strong>+500</strong>
+      <span>Maximum speed bonus</span>
+    </div>
+    <div class="stat">
+      <strong>6</strong>
+      <span>Categories</span>
+    </div>
+    <div class="stat">
+      <strong>🏆</strong>
+      <span>Sudden-death finale</span>
+    </div>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section id="setup" class="screen">
+  <div class="panel">
+    <div class="eyebrow">Battle setup</div>
+    <h2>Build your match</h2>
+
+    <label for="playerName">Your player name</label>
+    <input id="playerName" maxlength="18" placeholder="Enter your name">
+
+    <label for="category">Choose a category</label>
+    <select id="category">
+      <option value="Mixed">🎲 Mixed Questions</option>
+      <option value="General Knowledge">🌍 General Knowledge</option>
+      <option value="Science">🔬 Science</option>
+      <option value="Technology">💻 Technology</option>
+      <option value="Sports">🏆 Sports</option>
+      <option value="Geography">🗺️ Geography</option>
+      <option value="Entertainment">🎬 Entertainment</option>
+    </select>
+
+    <button class="primary" onclick="createRoom()">
+      Create Battle Room
+    </button>
+
+    <div style="text-align:center;margin:20px 0;color:var(--muted)">— OR —</div>
+
+    <label for="joinCode">Enter room code</label>
+    <input id="joinCode" maxlength="6" placeholder="Room code">
+
+    <button class="secondary" onclick="joinRoom()">
+      Join Room
+    </button>
+
+    <button class="secondary" onclick="showScreen('home')">
+      ← Back
+    </button>
+  </div>
+  <p class="notice">
+    Demo mode: room codes and opponents work locally in this browser.
+  </p>
+</section>
+
+<!-- LOBBY -->
+<section id="lobby" class="screen">
+  <div class="panel">
+    <div class="eyebrow">Room lobby</div>
+    <h2>Get ready to clash!</h2>
+    <p>Share this room code with your friends in demo mode.</p>
+    <div id="roomCode" class="room-code">------</div>
+    <div style="display:flex;gap:10px">
+      <button class="secondary" onclick="copyRoomCode()">Copy Code</button>
+      <button class="secondary" onclick="leaveRoom()">Leave</button>
+    </div>
+
+    <h2 style="margin-top:24px">Players</h2>
+    <div id="playersList"></div>
+
+    <button id="startButton" class="primary" onclick="startGame()">
+      Start 10-Round Battle
+    </button>
+  </div>
+</section>
+
+<!-- QUESTION -->
+<section id="game" class="screen">
+  <div class="panel">
+    <div class="question-top">
+      <span id="roundLabel">ROUND 1 / 10</span>
+      <span id="timerLabel">15 seconds</span>
+    </div>
+
+    <div class="timer">
+      <div id="timerFill" class="timer-fill"></div>
+    </div>
+
+    <div class="eyebrow" id="categoryLabel">GENERAL KNOWLEDGE</div>
+    <h2 id="questionText">Question goes here</h2>
+
+    <div id="answers" class="answers"></div>
+    <div id="feedback" class="feedback" hidden></div>
+  </div>
+
+  <div class="panel">
+    <h2>Live scoreboard</h2>
+    <div id="liveScoreboard"></div>
+  </div>
+</section>
+
+<!-- ROUND RESULTS -->
+<section id="roundResults" class="screen">
+  <div class="panel">
+    <div class="eyebrow">Round complete</div>
+    <h2 id="roundResultTitle">The results are in!</h2>
+    <div id="roundResultFeedback" class="feedback"></div>
+
+    <h2 style="margin-top:24px">Leaderboard</h2>
+    <div id="roundLeaderboard"></div>
+
+    <button id="continueButton" class="primary" onclick="nextRound()">
+      Next Round →
+    </button>
+  </div>
+</section>
+
+<!-- FINAL RESULTS -->
+<section id="final" class="screen">
+  <div class="panel hero">
+    <div class="eyebrow">Battle finished</div>
+    <h1>🏆<br><span style="color:var(--cyan)" id="winnerName">Champion!</span></h1>
+    <p id="finalSubtitle">The final scores are in.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Final leaderboard</h2>
+    <div id="finalLeaderboard"></div>
+    <button class="primary" onclick="playAgain()">Play Again</button>
+    <button class="secondary" onclick="showScreen('home')">Home</button>
+  </div>
+</section>
+
+<footer>QUIZ CLASH • THINK FAST. PLAY FAIR.</footer>
+</div>
+
+<script>
+const QUESTION_BANK = {
+  "General Knowledge": [
+    {q:"Which is the largest ocean on Earth?",a:["Atlantic","Indian","Pacific","Arctic"],c:2},
+    {q:"How many days are there in a leap year?",a:["364","365","366","367"],c:2},
+    {q:"What is the capital of Japan?",a:["Seoul","Tokyo","Beijing","Bangkok"],c:1},
+    {q:"Which animal is known as the King of the Jungle?",a:["Tiger","Elephant","Lion","Leopard"],c:2},
+    {q:"How many sides does a hexagon have?",a:["Five","Six","Seven","Eight"],c:1},
+    {q:"Which is the largest planet in our solar system?",a:["Earth","Saturn","Jupiter","Neptune"],c:2},
+    {q:"What is the currency of the United Kingdom?",a:["Euro","Dollar","Pound sterling","Franc"],c:2},
+    {q:"Which language is primarily spoken in Brazil?",a:["Spanish","Portuguese","French","Italian"],c:1},
+    {q:"What is the fastest land animal?",a:["Horse","Cheetah","Lion","Greyhound"],c:1},
+    {q:"How many colours are traditionally listed in a rainbow?",a:["Five","Six","Seven","Eight"],c:2}
+  ],
+  "Science": [
+    {q:"Which planet is known as the Red Planet?",a:["Venus","Mars","Mercury","Jupiter"],c:1},
+    {q:"What gas do plants absorb during photosynthesis?",a:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],c:2},
+    {q:"What is the chemical formula for water?",a:["CO2","H2O","O2","NaCl"],c:1},
+    {q:"Which organ pumps blood around the human body?",a:["Lungs","Brain","Heart","Liver"],c:2},
+    {q:"What force pulls objects toward Earth?",a:["Friction","Magnetism","Gravity","Electricity"],c:2},
+    {q:"Which part of a cell contains most of its genetic material?",a:["Nucleus","Membrane","Cytoplasm","Ribosome"],c:0},
+    {q:"What is the closest star to Earth?",a:["Sirius","The Sun","Polaris","Proxima Centauri"],c:1},
+    {q:"What is the boiling point of water at sea level?",a:["50°C","90°C","100°C","120°C"],c:2},
+    {q:"Which vitamin can the body produce with sunlight exposure?",a:["Vitamin A","Vitamin C","Vitamin D","Vitamin K"],c:2},
+    {q:"What is the hardest naturally occurring substance?",a:["Iron","Quartz","Diamond","Granite"],c:2}
+  ],
+  "Technology": [
+    {q:"What does CPU stand for?",a:["Central Processing Unit","Computer Power Utility","Core Program Unit","Central Program Upload"],c:0},
+    {q:"Which company develops the Windows operating system?",a:["Apple","Microsoft","Google","Samsung"],c:1},
+    {q:"What does URL stand for?",a:["Universal Reading Link","Uniform Resource Locator","United Routing Line","User Reference Location"],c:1},
+    {q:"Which of these is a programming language?",a:["Python","Cheetah","Eagle","Dolphin"],c:0},
+    {q:"What does RAM mainly provide?",a:["Long-term storage","Temporary working memory","Internet access","Screen brightness"],c:1},
+    {q:"Which company created the Android operating system originally?",a:["Google did not create it originally","Android Inc.","Microsoft","IBM"],c:1},
+    {q:"What does AI stand for?",a:["Automated Internet","Artificial Intelligence","Advanced Interface","Applied Integration"],c:1},
+    {q:"Which device is commonly used to connect to Wi-Fi?",a:["Router","Printer paper","Microphone","Projector screen"],c:0},
+    {q:"What is phishing?",a:["A type of cyber scam","A programming language","A computer monitor","A backup method"],c:0},
+    {q:"Which file extension commonly represents an HTML webpage?",a:[".mp3",".jpg",".html",".exe"],c:2}
+  ],
+  "Sports": [
+    {q:"How many players from one football team are on the field at a time?",a:["9","10","11","12"],c:2},
+    {q:"Which sport uses a shuttlecock?",a:["Tennis","Badminton","Squash","Table tennis"],c:1},
+    {q:"How many rings appear on the Olympic symbol?",a:["Four","Five","Six","Seven"],c:1},
+    {q:"In cricket, how many runs is a boundary worth if the ball crosses without bouncing?",a:["Two","Four","Six","Eight"],c:2},
+    {q:"Which sport is associated with Wimbledon?",a:["Golf","Tennis","Rugby","Cricket"],c:1},
+    {q:"How many points is a free throw worth in basketball?",a:["One","Two","Three","Four"],c:0},
+    {q:"Which country hosted the 2016 Summer Olympics?",a:["China","Brazil","Japan","Greece"],c:1},
+    {q:"What colour card usually means a player is sent off in football?",a:["Blue","Green","Yellow","Red"],c:3},
+    {q:"In which sport would you perform a slam dunk?",a:["Basketball","Volleyball","Baseball","Hockey"],c:0},
+    {q:"How many wickets does a team need to take to dismiss all ten batters in a standard cricket innings?",a:["Eight","Nine","Ten","Eleven"],c:2}
+  ],
+  "Geography": [
+    {q:"Which is the largest continent by area?",a:["Africa","Asia","Europe","South America"],c:1},
+    {q:"What is the capital of Australia?",a:["Sydney","Melbourne","Canberra","Perth"],c:2},
+    {q:"Which river flows through Egypt?",a:["Amazon","Nile","Danube","Thames"],c:1},
+    {q:"Mount Everest is part of which mountain range?",a:["Andes","Alps","Himalayas","Rockies"],c:2},
+    {q:"Which country is famous for the pyramids at Giza?",a:["Mexico","Egypt","India","Greece"],c:1},
+    {q:"Which is the smallest continent by land area?",a:["Europe","Antarctica","Australia","South America"],c:2},
+    {q:"The Sahara Desert is in which continent?",a:["Asia","Africa","Australia","Europe"],c:1},
+    {q:"Which ocean lies between Africa and Australia?",a:["Atlantic","Pacific","Indian","Arctic"],c:2},
+    {q:"What is the capital of Canada?",a:["Toronto","Vancouver","Ottawa","Montreal"],c:2},
+    {q:"Which country has the city of Istanbul?",a:["Turkey","Spain","Morocco","Portugal"],c:0}
+  ],
+  "Entertainment": [
+    {q:"Which fictional detective lives at 221B Baker Street?",a:["Hercule Poirot","Sherlock Holmes","Columbo","Nancy Drew"],c:1},
+    {q:"What is the name of Harry Potter's school?",a:["Narnia Academy","Hogwarts","Nevermore","Starfleet"],c:1},
+    {q:"Which instrument has black and white keys?",a:["Violin","Piano","Trumpet","Flute"],c:1},
+    {q:"Which superhero is also known as the Dark Knight?",a:["Superman","Iron Man","Batman","Thor"],c:2},
+    {q:"In the animated film Finding Nemo, what type of fish is Nemo?",a:["Goldfish","Clownfish","Shark","Swordfish"],c:1},
+    {q:"Which fictional kingdom is associated with Elsa and Anna?",a:["Arendelle","Gotham","Wakanda","Atlantis"],c:0},
+    {q:"What is the name of the cowboy in Toy Story?",a:["Buzz","Woody","Rex","Andy"],c:1},
+    {q:"Which superhero carries a shield with a star?",a:["Captain America","Spider-Man","Hulk","Doctor Strange"],c:0},
+    {q:"Which series features the fictional continent of Westeros?",a:["The Witcher","Game of Thrones","Lost","Friends"],c:1},
+    {q:"What is the name of Mickey Mouse's dog?",a:["Pluto","Goofy","Donald","Daisy"],c:0}
+  ]
+};
+
+let players = [];
+let roomCode = "";
+let hostId = null;
+let currentRound = 0;
+let questions = [];
+let currentQuestion = null;
 let timeLeft = 15;
+let timerInterval = null;
+let answered = false;
+let roundAnswers = {};
+let suddenDeath = false;
+let suddenQuestionCount = 0;
+let matchCategory = "Mixed";
 
-function startTimer() {
-    clearInterval(timerInterval);
-    timeLeft = 15;
-
-    const timerFill = document.getElementById('timer-bar-fill');
-    timerFill.style.width = '100%';
-
-    timerInterval = setInterval(() => {
-        timeLeft--;
-
-        timerFill.style.width = `${(timeLeft / 15) * 100}%`;
-
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            revealAnswer();
-        }
-    }, 1000);
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-function checkAnswer(selectedIndex, button) {
-    clearInterval(timerInterval);
+function showRules() {
+  alert(
+    "HOW TO PLAY\n\n" +
+    "1. Choose a category and create a room.\n" +
+    "2. Answer each question before the timer runs out.\n" +
+    "3. Correct answers earn 1000 points plus a speed bonus.\n" +
+    "4. Play 10 rounds.\n" +
+    "5. If the top score is tied, sudden death decides the champion.\n\n" +
+    "Note: This is a local demo, not real online multiplayer."
+  );
+}
 
-    const question = sampleQuestions[currentQIndex];
-    const buttons = document.querySelectorAll('.option-btn');
+function shuffled(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
 
-    buttons.forEach(btn => {
-        btn.disabled = true;
-        btn.style.cursor = 'default';
-    });
+function createRoom() {
+  const name = document.getElementById("playerName").value.trim() || "Player 1";
+  matchCategory = document.getElementById("category").value;
 
-    if (selectedIndex === question.a) {
-        score += 100 + Math.max(0, timeLeft * 5);
-        button.classList.add('correct');
-        button.style.borderColor = '#10b981';
-    } else {
-        button.style.background = 'rgba(239, 68, 68, 0.2)';
-        button.style.borderColor = '#ef4444';
+  roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+  hostId = "p1";
+
+  players = [
+    {id:"p1",name:name,score:0,isHost:true},
+    {id:"p2",name:"Alex",score:0,isHost:false},
+    {id:"p3",name:"Jordan",score:0,isHost:false}
+  ];
+
+  document.getElementById("roomCode").textContent = roomCode;
+  renderPlayers();
+  showScreen("lobby");
+}
+
+function joinRoom() {
+  const code = document.getElementById("joinCode").value.trim().toUpperCase();
+
+  if (!code) {
+    alert("Please enter a room code.");
+    return;
+  }
+
+  alert(
+    "This standalone demo cannot join another device's room.\n\n" +
+    "To support real players on separate phones, the game needs a shared online database."
+  );
+}
+
+function renderPlayers() {
+  document.getElementById("playersList").innerHTML = players.map(p => `
+    <div class="player">
+      <div>
+        <strong>${escapeHTML(p.name)}</strong><br>
+        <small>${p.isHost ? "👑 Host" : "Ready to play"}</small>
+      </div>
+      <span>${p.score} pts</span>
+    </div>
+  `).join("");
+}
+
+function escapeHTML(str) {
+  return String(str).replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+async function copyRoomCode() {
+  try {
+    await navigator.clipboard.writeText(roomCode);
+    alert("Room code copied: " + roomCode);
+  } catch {
+    alert("Your room code is: " + roomCode);
+  }
+}
+
+function leaveRoom() {
+  clearInterval(timerInterval);
+  players = [];
+  showScreen("setup");
+}
+
+function prepareQuestions() {
+  if (matchCategory === "Mixed") {
+    const all = Object.values(QUESTION_BANK).flat();
+    questions = shuffled(all).slice(0, 10);
+  } else {
+    questions = shuffled(QUESTION_BANK[matchCategory]).slice(0, 10);
+  }
+}
+
+function startGame() {
+  if (!players.length) return;
+
+  players.forEach(p => p.score = 0);
+  currentRound = 0;
+  suddenDeath = false;
+  suddenQuestionCount = 0;
+  prepareQuestions();
+  startRound();
+}
+
+function startRound() {
+  clearInterval(timerInterval);
+  answered = false;
+  roundAnswers = {};
+
+  if (!suddenDeath && currentRound >= 10) {
+    finishOrSuddenDeath();
+    return;
+  }
+
+  if (suddenDeath) {
+    currentQuestion = getSuddenDeathQuestion();
+  } else {
+    currentQuestion = questions[currentRound];
+  }
+
+  timeLeft = 15;
+  document.getElementById("roundLabel").textContent =
+    suddenDeath
+      ? "SUDDEN DEATH"
+      : `ROUND ${currentRound + 1} / 10`;
+
+  document.getElementById("timerLabel").textContent = timeLeft + " seconds";
+  document.getElementById("timerFill").style.width = "100%";
+  document.getElementById("categoryLabel").textContent =
+    currentQuestion.category || matchCategory;
+  document.getElementById("questionText").textContent = currentQuestion.q;
+  document.getElementById("feedback").hidden = true;
+
+  document.getElementById("answers").innerHTML = currentQuestion.a.map((a,i) => `
+    <button class="answer" onclick="submitAnswer(${i})">
+      <span style="color:var(--cyan);margin-right:8px">${String.fromCharCode(65+i)}.</span>
+      ${escapeHTML(a)}
+    </button>
+  `).join("");
+
+  renderLiveScoreboard();
+  showScreen("game");
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timerLabel").textContent = timeLeft + " seconds";
+    document.getElementById("timerFill").style.width =
+      Math.max(0, timeLeft / 15 * 100) + "%";
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      endRound("Time's up!");
     }
-
-    buttons[question.a].classList.add('correct');
-
-    document.getElementById('score-indicator').innerText =
-        `Score: ${score}`;
-
-    document.getElementById('next-btn').style.display = 'block';
+  }, 1000);
 }
 
-function revealAnswer() {
-    const question = sampleQuestions[currentQIndex];
-    const buttons = document.querySelectorAll('.option-btn');
-
-    buttons.forEach(btn => {
-        btn.disabled = true;
-        btn.style.cursor = 'default';
-    });
-
-    if (buttons[question.a]) {
-        buttons[question.a].classList.add('correct');
-    }
-
-    document.getElementById('next-btn').style.display = 'block';
+function getSuddenDeathQuestion() {
+  const all = Object.values(QUESTION_BANK).flat();
+  const q = shuffled(all)[0];
+  return {...q, category:"Sudden Death"};
 }
 
-function nextQuestion() {
-    clearInterval(timerInterval);
-    currentQIndex++;
-    round = currentQIndex + 1;
-    showQuestion();
+function submitAnswer(index) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  const correct = index === currentQuestion.c;
+  const bonus = correct ? Math.round((timeLeft / 15) * 500) : 0;
+  const earned = correct ? 1000 + bonus : 0;
+
+  roundAnswers.p1 = {index, correct, earned};
+
+  if (correct) {
+    players[0].score += earned;
+  }
+
+  // Demo opponents choose answers automatically.
+  players.slice(1).forEach(p => {
+    const right = Math.random() < 0.55;
+    const opponentCorrectIndex = currentQuestion.c;
+    const randomWrong = (currentQuestion.c + 1 + Math.floor(Math.random()*3)) % 4;
+    const choice = right ? opponentCorrectIndex : randomWrong;
+    const opponentTime = 2 + Math.floor(Math.random()*12);
+    const opponentBonus = right ? Math.round((opponentTime / 15) * 500) : 0;
+    const opponentEarned = right ? 1000 + opponentBonus : 0;
+
+    roundAnswers[p.id] = {
+      index:choice,
+      correct:right,
+      earned:opponentEarned
+    };
+
+    if (right) p.score += opponentEarned;
+  });
+
+  document.querySelectorAll(".answer").forEach((button,i) => {
+    button.disabled = true;
+    if (i === currentQuestion.c) button.classList.add("correct");
+    if (i === index && !correct) button.classList.add("wrong");
+  });
+
+  const feedback = document.getElementById("feedback");
+  feedback.hidden = false;
+  feedback.innerHTML = correct
+    ? `✅ Correct! You earned <strong>${earned} points</strong> (${1000} base + ${bonus} speed bonus).`
+    : `❌ Not quite! The correct answer was <strong>${escapeHTML(currentQuestion.a[currentQuestion.c])}</strong>.`;
+
+  renderLiveScoreboard();
+
+  setTimeout(() => endRound("Answers locked in!"), 1800);
 }
 
-function endGame() {
-    clearInterval(timerInterval);
+function endRound(message) {
+  clearInterval(timerInterval);
 
-    goToScreen('end-screen');
+  document.getElementById("roundResultTitle").textContent = message;
 
-    document.getElementById('end-status').innerText =
-        `You scored ${score} points!`;
+  const myAnswer = roundAnswers.p1;
+  document.getElementById("roundResultFeedback").innerHTML = myAnswer
+    ? (myAnswer.correct
+        ? `You answered correctly and earned <strong>${myAnswer.earned}</strong> points.`
+        : `You didn't earn points this round. Keep going!`)
+    : `You ran out of time. The correct answer was <strong>${escapeHTML(currentQuestion.a[currentQuestion.c])}</strong>.`;
 
-    const leaderboard = document.getElementById('final-leaderboard');
-    leaderboard.innerHTML = '';
+  document.getElementById("roundLeaderboard").innerHTML = leaderboardHTML();
+  document.getElementById("continueButton").textContent =
+    suddenDeath ? "Finish Battle →" :
+    currentRound === 9 ? "See Final Results →" : "Next Round →";
 
-    const nickname =
-        document.getElementById('nickname-input').value.trim() || 'Player 1';
-
-    const players = [
-        { name: nickname, score: score },
-        ...demoPlayers
-    ];
-
-    players.sort((a, b) => b.score - a.score);
-
-    players.forEach((player, index) => {
-        const li = document.createElement('li');
-        li.className = 'player-item';
-
-        const name = document.createElement('span');
-        name.innerText = `${index + 1}. ${player.name}`;
-
-        const points = document.createElement('span');
-        points.innerText = `${player.score} pts`;
-
-        li.appendChild(name);
-        li.appendChild(points);
-        leaderboard.appendChild(li);
-    });
+  showScreen("roundResults");
 }
 
-function restartGame() {
-    clearInterval(timerInterval);
+function nextRound() {
+  if (suddenDeath) {
+    finishSuddenDeath();
+    return;
+  }
 
-    score = 0;
-    round = 1;
-    currentQIndex = 0;
+  currentRound++;
 
-    goToScreen('home-screen');
+  if (currentRound >= 10) {
+    finishOrSuddenDeath();
+  } else {
+    startRound();
+  }
 }
+
+function getLeaders() {
+  const sorted = [...players].sort((a,b) => b.score - a.score);
+  const topScore = sorted[0]?.score ?? 0;
+  return sorted.filter(p => p.score === topScore);
+}
+
+function finishOrSuddenDeath() {
+  const leaders = getLeaders();
+
+  if (leaders.length > 1) {
+    suddenDeath = true;
+    suddenQuestionCount = 0;
+    alert("It's a tie! Sudden death begins!");
+    startRound();
+  } else {
+    showFinal();
+  }
+}
+
+function finishSuddenDeath() {
+  const leaders = getLeaders();
+
+  if (leaders.length > 1) {
+    suddenQuestionCount++;
+    alert("Still tied! Another sudden-death question!");
+    startRound();
+  } else {
+    showFinal();
+  }
+}
+
+function showFinal() {
+  clearInterval(timerInterval);
+
+  const sorted = [...players].sort((a,b) => b.score - a.score);
+  const winner = sorted[0];
+
+  document.getElementById("winnerName").textContent = winner.name;
+  document.getElementById("finalSubtitle").textContent =
+    `${winner.score.toLocaleString()} points — congratulations!`;
+
+  document.getElementById("finalLeaderboard").innerHTML = leaderboardHTML();
+  showScreen("final");
+}
+
+function leaderboardHTML() {
+  const sorted = [...players].sort((a,b) => b.score - a.score);
+
+  return `
+    <table>
+      <thead>
+        <tr><th>Rank</th><th>Player</th><th>Score</th></tr>
+      </thead>
+      <tbody>
+        ${sorted.map((p,i) => `
+          <tr>
+            <td>${i===0 ? "🥇" : i===1 ? "🥈" : i===2 ? "🥉" : i+1}</td>
+            <td>${escapeHTML(p.name)}</td>
+            <td><strong>${p.score.toLocaleString()}</strong></td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderLiveScoreboard() {
+  document.getElementById("liveScoreboard").innerHTML = leaderboardHTML();
+}
+
+function playAgain() {
+  players.forEach(p => p.score = 0);
+  currentRound = 0;
+  suddenDeath = false;
+  prepareQuestions();
+  startRound();
+}
+</script>
+</body>
+</html>
