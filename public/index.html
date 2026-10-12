@@ -175,7 +175,58 @@ const firebaseConfig = {
 };
 
 let app, auth, db;
+// ===== QUIZ CLASH SOUND EFFECTS =====
+let quizAudioContext = null;
 
+function playQuizSound(type) {
+try {
+const AudioContextClass =
+window.AudioContext || window.webkitAudioContext;
+
+if (!AudioContextClass) return;
+
+if (!quizAudioContext) {
+  quizAudioContext = new AudioContextClass();
+}
+
+if (quizAudioContext.state === "suspended") {
+  quizAudioContext.resume();
+}
+
+const sounds = {
+  click: [500, 0.06],
+  correct: [880, 0.15],
+  wrong: [220, 0.18],
+  winner: [1040, 0.3]
+};
+
+const sound = sounds[type];
+if (!sound) return;
+
+const oscillator = quizAudioContext.createOscillator();
+const gain = quizAudioContext.createGain();
+
+oscillator.type = "sine";
+oscillator.frequency.value = sound[0];
+
+const now = quizAudioContext.currentTime;
+
+gain.gain.setValueAtTime(0.12, now);
+gain.gain.exponentialRampToValueAtTime(
+  0.001,
+  now + sound[1]
+);
+
+oscillator.connect(gain);
+gain.connect(quizAudioContext.destination);
+
+oscillator.start(now);
+oscillator.stop(now + sound[1]);
+
+} catch (error) {
+console.log("Sound effect unavailable.");
+}
+  }
 const $ = id => document.getElementById(id);
 
 try {
