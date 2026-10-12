@@ -646,12 +646,11 @@ function renderGame() {
   renderLeaderboard($("gameLeaderboard"));
   startTimer();
 }
-
 async function submitAnswer(choice) {
   if (!currentRoom?.game || selectedAnswer !== null || currentRoom.game.status !== "playing") return;
   const question = getQuestion();
   if (!question || choice < 0 || choice >= question.a.length) return;
-
+playQuizSound(choice === question.c ? "correct" : "wrong");
   selectedAnswer = choice;
   try {
     await roomRef.child("answers/" + currentUser.uid).set({
