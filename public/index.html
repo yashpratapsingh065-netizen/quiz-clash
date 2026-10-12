@@ -816,7 +816,13 @@ function showResults() {
   const players = getPlayers();
   const highestScore = players.length ? Math.max(...players.map(p => p.score || 0)) : 0;
   const winners = players.filter(p => (p.score || 0) === highestScore);
+if (window.winnerSoundRoomCode !== currentRoomCode) {
+  window.winnerSoundRoomCode = currentRoomCode;
 
+  if (winners.length === 1) {
+    playQuizSound("winner");
+  }
+  }
   if (winners.length === 1) {
     $("resultTitle").textContent = "🏆 " + winners[0].name + " Wins!";
     $("resultSubtitle").textContent = "Congratulations! Final score: " + highestScore + " points.";
